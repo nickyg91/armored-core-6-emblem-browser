@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArmoredCoreSixEmblemBrowser.Web", "ArmoredCoreSixEmblemBrowser.Web\ArmoredCoreSixEmblemBrowser.Web.csproj", "{FBE36703-9E1D-4A58-9E77-3EDC242DB85A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArmoredCoreSixEmblemBrowser.Entities", "ArmoredCoreSixEmblemBrowser.Entities\ArmoredCoreSixEmblemBrowser.Entities.csproj", "{4B71A070-EEB3-4528-9909-2FCAAB79AC74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArmoredCoreSixEmblemBrowser.Data", "ArmoredCoreSixEmblemBrowser.Data\ArmoredCoreSixEmblemBrowser.Data.csproj", "{63502786-A17C-4578-AB2F-012D57DB3F81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArmoredCoreSixEmblemBrowser.Domain", "ArmoredCoreSixEmblemBrowser.Domain\ArmoredCoreSixEmblemBrowser.Domain.csproj", "{D156D8B4-3647-4E04-8431-2442435F573C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FBE36703-9E1D-4A58-9E77-3EDC242DB85A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBE36703-9E1D-4A58-9E77-3EDC242DB85A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBE36703-9E1D-4A58-9E77-3EDC242DB85A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBE36703-9E1D-4A58-9E77-3EDC242DB85A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B71A070-EEB3-4528-9909-2FCAAB79AC74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B71A070-EEB3-4528-9909-2FCAAB79AC74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B71A070-EEB3-4528-9909-2FCAAB79AC74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B71A070-EEB3-4528-9909-2FCAAB79AC74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63502786-A17C-4578-AB2F-012D57DB3F81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63502786-A17C-4578-AB2F-012D57DB3F81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63502786-A17C-4578-AB2F-012D57DB3F81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63502786-A17C-4578-AB2F-012D57DB3F81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D156D8B4-3647-4E04-8431-2442435F573C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D156D8B4-3647-4E04-8431-2442435F573C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D156D8B4-3647-4E04-8431-2442435F573C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D156D8B4-3647-4E04-8431-2442435F573C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
