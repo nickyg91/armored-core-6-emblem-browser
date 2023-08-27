@@ -1,0 +1,5 @@
+@import '../../node_modules/primevue/resources/themes/viva-dark/theme.css';
+
+body {
+  background-color: var(--surface-ground);
+}
