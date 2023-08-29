@@ -16,7 +16,10 @@ public class EmblemRepository : IEmblemRepository
     {
         var totalEmblems = await _context.Emblems.CountAsync();
 
-        var emblems = _context.Emblems.Skip(totalPerPage * pageNumber).Take(totalPerPage).OrderBy(x => x.Name);
+        var emblems = _context.Emblems
+            .Skip(totalPerPage * pageNumber)
+            .Take(totalPerPage)
+            .OrderByDescending(x => x.CreatedAtUtc);
 
         return (emblems, totalEmblems);
     }

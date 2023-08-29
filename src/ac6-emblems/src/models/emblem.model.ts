@@ -4,6 +4,8 @@ export class Emblem {
   name!: string;
   platform!: PlatformType;
   shareId!: string;
-  fileName!: string;
+  fileName?: string;
+  imageUrl?: string;
+  createdAtUtc!: Date;
   id!: number;
 }

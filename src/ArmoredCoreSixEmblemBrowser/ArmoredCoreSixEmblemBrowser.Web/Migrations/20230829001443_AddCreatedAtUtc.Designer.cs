@@ -3,6 +3,7 @@ using System;
 using ArmoredCoreSixEmblemBrowser.Data.Contexts.EmblemBrowser;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ArmoredCoreSixEmblemBrowser.Web.Migrations
 {
     [DbContext(typeof(EmblemBrowserContext))]
-    partial class EmblemBrowserContextModelSnapshot : ModelSnapshot
+    [Migration("20230829001443_AddCreatedAtUtc")]
+    partial class AddCreatedAtUtc
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,10 +46,6 @@ namespace ArmoredCoreSixEmblemBrowser.Web.Migrations
                         .HasColumnType("character varying(64)")
                         .HasColumnName("file_name");
 
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("text")
-                        .HasColumnName("image_url");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -65,11 +64,6 @@ namespace ArmoredCoreSixEmblemBrowser.Web.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_emblem_id");
-
-                    b.HasIndex(new[] { "ShareId" }, "ix_unique_share_id_platform")
-                        .IsUnique();
-
-                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ShareId" }, "ix_unique_share_id_platform"), new[] { "Platform" });
 
                     b.ToTable("emblem", "ac6");
                 });

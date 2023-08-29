@@ -13,14 +13,17 @@
     "prestart": "node aspnetcore-https"
   },
   "dependencies": {
+    "@vee-validate/zod": "^4.11.3",
     "axios": "^1.5.0",
     "cirrus-ui": "^0.7.1",
     "pinia": "^2.1.6",
     "primeflex": "^3.3.1",
     "primeicons": "^6.0.1",
     "primevue": "^3.32.2",
+    "vee-validate": "^4.11.3",
     "vue": "^3.3.4",
-    "vue-router": "^4.2.4"
+    "vue-router": "^4.2.4",
+    "zod": "^3.22.2"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.3.2",

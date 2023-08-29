@@ -7,4 +7,6 @@ public class Emblem
     public PlatformType Platform { get; set; }
     public string Name { get; set; }
     public string? FileName { get; set; }
+    public string? ImageUrl { get; set; }
+    public DateTimeOffset CreatedAtUtc { get; set; }
 }
