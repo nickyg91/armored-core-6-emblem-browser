@@ -1,3 +1,5 @@
+using ArmoredCoreSixEmblemBrowser.Core;
+using ArmoredCoreSixEmblemBrowser.Core.Configuration;
 using ArmoredCoreSixEmblemBrowser.Data.Contexts.EmblemBrowser;
 using ArmoredCoreSixEmblemBrowser.Data.Contexts.EmblemBrowser.Repositories;
 using ArmoredCoreSixEmblemBrowser.Domain;
@@ -9,10 +11,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 var isDev = builder.Environment.IsDevelopment();
 
-var connectionString = builder.Configuration.GetConnectionString("EmblemBrowser");
+builder.Configuration.AddEnvironmentVariables();
+builder.Configuration.AddAzureAppConfig(isDev);
+var connectionString = builder.Configuration["Settings:ConnectionStrings:Ac6EmblemBrowser"];
+var blobConnectionString = builder.Configuration["Settings:ConnectionStrings:BlobStorage"];
+var settingsSection = builder.Configuration.GetSection("Settings");
+builder.Services.Configure<AppConfigSettings>(settingsSection);
 
+builder.Services.AddBlobService(blobConnectionString);
+builder.Services.AddScoped<IEmblemBlobStorageService, EmblemBlobStorageService>();
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

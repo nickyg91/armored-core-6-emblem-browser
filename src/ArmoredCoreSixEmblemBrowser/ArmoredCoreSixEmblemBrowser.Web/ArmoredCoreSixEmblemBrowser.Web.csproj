@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>0065fbad-3a97-4fdc-8da6-7a1ff5bf1b86</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -32,6 +33,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ArmoredCoreSixEmblemBrowser.Core\ArmoredCoreSixEmblemBrowser.Core.csproj" />
       <ProjectReference Include="..\ArmoredCoreSixEmblemBrowser.Data\ArmoredCoreSixEmblemBrowser.Data.csproj" />
       <ProjectReference Include="..\ArmoredCoreSixEmblemBrowser.Domain\ArmoredCoreSixEmblemBrowser.Domain.csproj" />
     </ItemGroup>

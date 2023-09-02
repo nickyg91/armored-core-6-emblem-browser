@@ -58,4 +58,9 @@ public class EmblemRepository : IEmblemRepository
         }
         _context.Emblems.Remove(emblem);
     }
+
+    public async Task<Emblem?> GetById(int id)
+    {
+        return await _context.Emblems.FindAsync(id);
+    }
 }

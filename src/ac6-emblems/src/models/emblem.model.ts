@@ -8,4 +8,5 @@ export class Emblem {
   imageUrl?: string;
   createdAtUtc!: Date;
   id!: number;
+  imageData!: string;
 }

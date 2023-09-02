@@ -8,4 +8,5 @@ public interface IEmblemRepository
     IEnumerable<Emblem> SearchEmblems(string name, string shareId);
     Task AddEmblem(Emblem emblem);
     Task RemoveEmblem(int id);
+    Task<Emblem?> GetById(int id);
 }

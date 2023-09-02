@@ -54,5 +54,7 @@ public class EmblemEntityConfiguration : IEntityTypeConfiguration<Emblem>
             .HasIndex(x => x.ShareId, "ix_unique_share_id_platform")
             .IncludeProperties(x => x.Platform)
             .IsUnique();
+
+        builder.Ignore(x => x.ImageData);
     }
 }

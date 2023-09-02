@@ -15,8 +15,8 @@ const emblems = store.emblems;
         <InputText style="width: 100%" placeholder="Search Name, ShareId, Platform"></InputText>
       </div>
       <div class="mt-2 grid">
-        <div v-for="emblem in emblems" :key="emblem.id" class="col">
-          <EmblemCard :emblem="emblem" />
+        <div v-for="emblem in emblems" :key="emblem.id" class="p-2 md:col-6 lg:col-3 sm:col-1">
+          <EmblemCard :emblem="emblem"></EmblemCard>
         </div>
       </div>
     </template>

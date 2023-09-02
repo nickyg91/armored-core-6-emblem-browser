@@ -3,6 +3,7 @@ import { PlatformType } from '@/enums/platform-type.enum';
 import type { Emblem } from '@/models/emblem.model';
 import Card from 'primevue/card';
 import Tag from 'primevue/tag';
+import ImageContainer from './ImageContainer.vue';
 defineProps<{ emblem: Emblem }>();
 
 function getTagColor(platform: PlatformType): string {
@@ -26,10 +27,10 @@ function getPlatformName(platform: PlatformType): string {
 </script>
 
 <template>
-  <Card>
-    <!-- <template v-if="emblem.imageUrl" #header>
-      <img class="img" crossorigin="" :src="emblem.imageUrl" :alt="'image for ' + emblem.name" />
-    </template> -->
+  <Card class="card-container">
+    <template v-if="emblem.imageUrl" #header>
+      <ImageContainer :id="emblem.id" :name="emblem.name"></ImageContainer>
+    </template>
     <template #title> {{ emblem.name }} </template>
     <template #subtitle>
       <Tag :severity="getTagColor(emblem.platform)" :value="getPlatformName(emblem.platform)">
@@ -42,8 +43,7 @@ function getPlatformName(platform: PlatformType): string {
 </template>
 
 <style scoped>
-.img {
-  width: 256px;
-  height: 256px;
+.card-container {
+  height: 100%;
 }
 </style>

@@ -7,13 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ArmoredCoreSixEmblemBrowser.Data\ArmoredCoreSixEmblemBrowser.Data.csproj" />
-      <ProjectReference Include="..\ArmoredCoreSixEmblemBrowser.Entities\ArmoredCoreSixEmblemBrowser.Entities.csproj" />
-    </ItemGroup>
-
-
-    <ItemGroup>
+      <PackageReference Include="Azure.Identity" Version="1.10.0" />
       <PackageReference Include="Azure.Storage.Blobs" Version="12.17.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="6.1.0" />
     </ItemGroup>
+
 
 </Project>
