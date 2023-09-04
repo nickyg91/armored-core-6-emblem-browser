@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import EmblemCard from '@/components/EmblemCard.vue';
+import type { Emblem } from '@/models/emblem.model';
 import { useEmblemStore } from '@/stores/emblems.store';
 import InputText from 'primevue/inputtext';
 import ProgressSpinner from 'primevue/progressspinner';
+import { onMounted, ref } from 'vue';
 
 const store = useEmblemStore();
-await store.getEmblems();
-const emblems = store.emblems;
+const emblems = ref<Emblem[]>([]);
+onMounted(async () => {
+  await store.getEmblems();
+  emblems.value = store.emblems;
+});
 </script>
 <template>
   <section>

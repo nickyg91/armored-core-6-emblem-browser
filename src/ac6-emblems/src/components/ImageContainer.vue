@@ -13,7 +13,9 @@ async function loadImage() {
         responseType: 'blob'
       })
     ).data;
+    console.log(bytes);
     const url = URL.createObjectURL(bytes);
+    console.log(url);
     image.value = url;
   } catch (error) {
     //nothing right now
