@@ -8,13 +8,13 @@ const image = ref();
 async function loadImage() {
   try {
     isLoading.value = true;
-    var bytes = (
+    const blob = (
       await axios.get(`/api/emblem/image/${props.id}`, {
         responseType: 'blob'
       })
     ).data;
-    console.log(bytes);
-    const url = URL.createObjectURL(bytes);
+    console.log(blob);
+    const url = URL.createObjectURL(blob);
     console.log(url);
     image.value = url;
   } catch (error) {

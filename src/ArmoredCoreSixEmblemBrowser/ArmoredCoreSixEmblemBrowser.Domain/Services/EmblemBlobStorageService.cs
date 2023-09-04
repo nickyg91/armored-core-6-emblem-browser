@@ -36,6 +36,10 @@ public class EmblemBlobStorageService : IEmblemBlobStorageService
         }
         var blobClient = _blobContainerClient.GetBlobClient(identifier);
         var downloadedBlob = await blobClient.DownloadAsync();
-        return downloadedBlob.Value.Content;
+        var stream = new MemoryStream();
+        await downloadedBlob.Value.Content.CopyToAsync(stream);
+        await _cache.WriteImage(identifier, stream, TimeSpan.FromDays(7));
+        
+        return stream;
     }
 }

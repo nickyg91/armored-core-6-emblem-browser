@@ -58,7 +58,11 @@ public class CacheService : ICacheService
         }
         var stream = new MemoryStream();
         await stream.WriteAsync(bytes);
-        stream.Seek(0, SeekOrigin.Begin);
+        if (stream.Position != 0 && stream.CanSeek)
+        {
+            stream.Seek(0, SeekOrigin.Begin);    
+        }
+        
         return stream;
     }
     
