@@ -9,4 +9,5 @@ public interface IEmblemRepository
     Task AddEmblem(Emblem emblem);
     Task RemoveEmblem(int id);
     Task<Emblem?> GetById(int id);
+    Task<(string? ImageIdentifier, string ImageExtension)> GetEmblemImageIdentifier(int id);
 }

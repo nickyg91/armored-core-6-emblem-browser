@@ -58,13 +58,13 @@ public class EmblemBrowserService : IEmblemBrowserService
 
     public async Task<(byte[] ImageData, string Extension)> GetEmblemImage(int id)
     {
-        var emblem = await _emblemUnitOfWork.EmblemRepository.GetById(id);
-        if (emblem == null)
+        var emblemImageTuple = await _emblemUnitOfWork.EmblemRepository.GetEmblemImageIdentifier(id);
+        if (string.IsNullOrEmpty(emblemImageTuple.ImageIdentifier))
         {
             throw new Exception("Emblem not found.");
         }
 
-        var stream = await _emblemBlobStorageService.DownloadBlob(emblem.ImageUrl!);
-        return (stream, emblem.ImageExtension);
+        var stream = await _emblemBlobStorageService.DownloadBlob(emblemImageTuple.ImageIdentifier);
+        return (stream, emblemImageTuple.ImageExtension);
     }
 }
