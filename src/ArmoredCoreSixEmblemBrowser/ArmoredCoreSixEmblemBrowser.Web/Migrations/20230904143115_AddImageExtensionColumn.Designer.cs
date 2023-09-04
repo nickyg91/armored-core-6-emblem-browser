@@ -3,6 +3,7 @@ using System;
 using ArmoredCoreSixEmblemBrowser.Data.Contexts.EmblemBrowser;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ArmoredCoreSixEmblemBrowser.Web.Migrations
 {
     [DbContext(typeof(EmblemBrowserContext))]
-    partial class EmblemBrowserContextModelSnapshot : ModelSnapshot
+    [Migration("20230904143115_AddImageExtensionColumn")]
+    partial class AddImageExtensionColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,8 +48,8 @@ namespace ArmoredCoreSixEmblemBrowser.Web.Migrations
 
                     b.Property<string>("ImageExtension")
                         .IsRequired()
-                        .HasMaxLength(24)
-                        .HasColumnType("character varying(24)")
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)")
                         .HasColumnName("image_extension");
 
                     b.Property<string>("ImageUrl")
@@ -72,8 +75,10 @@ namespace ArmoredCoreSixEmblemBrowser.Web.Migrations
                     b.HasKey("Id")
                         .HasName("pk_emblem_id");
 
-                    b.HasIndex(new[] { "ShareId", "Platform" }, "ix_unique_share_id_platform")
+                    b.HasIndex(new[] { "ShareId" }, "ix_unique_share_id_platform")
                         .IsUnique();
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ShareId" }, "ix_unique_share_id_platform"), new[] { "Platform" });
 
                     b.ToTable("emblem", "ac6");
                 });

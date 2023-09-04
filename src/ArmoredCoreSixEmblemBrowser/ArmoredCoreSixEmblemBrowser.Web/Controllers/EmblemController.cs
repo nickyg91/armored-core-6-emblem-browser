@@ -45,8 +45,8 @@ namespace ArmoredCoreSixEmblemBrowser.Web.Controllers
         [HttpGet("image/{id}")]
         public async Task<IActionResult> GetImageForEmblem(int id)
         {
-            var stream = await _emblemService.GetEmblemImage(id);
-            return File(stream, "application/octet-stream");
+            var data = await _emblemService.GetEmblemImage(id);
+            return File(data.ImageData, data.Extension);
         }
     }
 }

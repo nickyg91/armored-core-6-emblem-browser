@@ -51,10 +51,19 @@ public class EmblemEntityConfiguration : IEntityTypeConfiguration<Emblem>
             .HasColumnName("image_url");
 
         builder
-            .HasIndex(x => x.ShareId, "ix_unique_share_id_platform")
-            .IncludeProperties(x => x.Platform)
+            .HasIndex(x => new
+            {
+                x.ShareId,
+                x.Platform
+            }, "ix_unique_share_id_platform")
             .IsUnique();
 
+        builder
+            .Property(x => x.ImageExtension)
+            .IsRequired()
+            .HasColumnName("image_extension")
+            .HasMaxLength(24);
+        
         builder.Ignore(x => x.ImageData);
     }
 }

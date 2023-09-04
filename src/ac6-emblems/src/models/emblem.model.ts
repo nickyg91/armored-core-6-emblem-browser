@@ -9,4 +9,5 @@ export class Emblem {
   createdAtUtc!: Date;
   id!: number;
   imageData!: string;
+  imageExtension!: string;
 }

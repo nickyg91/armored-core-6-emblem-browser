@@ -56,6 +56,7 @@ const platformMap = computed(() => {
 const onSubmit = handleSubmit(async (values) => {
   const emblem = values as Emblem;
   emblem.imageData = fileData.value!;
+  emblem.imageExtension = file.value!.type;
   await store.addEmblem(emblem);
 });
 

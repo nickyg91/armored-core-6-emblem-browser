@@ -49,7 +49,7 @@ public class EmblemBrowserService : IEmblemBrowserService
         return emblem;
     }
 
-    public async Task<Stream> GetEmblemImage(int id)
+    public async Task<(byte[] ImageData, string Extension)> GetEmblemImage(int id)
     {
         var emblem = await _emblemUnitOfWork.EmblemRepository.GetById(id);
         if (emblem == null)
@@ -58,7 +58,6 @@ public class EmblemBrowserService : IEmblemBrowserService
         }
 
         var stream = await _emblemBlobStorageService.DownloadBlob(emblem.ImageUrl!);
-
-        return stream;
+        return (stream, emblem.ImageExtension);
     }
 }

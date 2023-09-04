@@ -41,29 +41,26 @@ public class CacheService : ICacheService
         return muxer;
     }
     
-    public async Task WriteImage(string key, Stream imageData, TimeSpan ttl)
+    public async Task WriteImage(string key, byte[] imageData, TimeSpan ttl)
     {
-        imageData.Seek(0, SeekOrigin.Begin);
-        using var reader = new StreamReader(imageData);
-        var bytes = Encoding.UTF8.GetBytes(await reader.ReadToEndAsync());
-        await Database.StringSetAsync(key, bytes, ttl);
+        await Database.StringSetAsync(key, imageData, ttl);
     }
 
-    public async Task<Stream?> GetImage(string key)
+    public async Task<byte[]?> GetImage(string key)
     {
         byte[]? bytes = await Database.StringGetAsync(key);
         if (bytes == null || bytes.Length == 0)
         {
             return null;
         }
-        var stream = new MemoryStream();
-        await stream.WriteAsync(bytes);
-        if (stream.Position != 0 && stream.CanSeek)
-        {
-            stream.Seek(0, SeekOrigin.Begin);    
-        }
+        // var stream = new MemoryStream();
+        // await stream.WriteAsync(bytes);
+        // if (stream.Position != 0 && stream.CanSeek)
+        // {
+        //     stream.Seek(0, SeekOrigin.Begin);    
+        // }
         
-        return stream;
+        return bytes;
     }
     
 }

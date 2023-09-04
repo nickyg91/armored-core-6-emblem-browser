@@ -23,11 +23,11 @@ public class EmblemBlobStorageService : IEmblemBlobStorageService
         var blobIdentifier = $"ac6-emblem-{id}-{name}";
         var blockBlobClient = _blobContainerClient.GetBlockBlobClient(blobIdentifier);
         await blockBlobClient.UploadAsync(stream);
-        await _cache.WriteImage(blobIdentifier, stream, TimeSpan.FromDays(7));
+        await _cache.WriteImage(blobIdentifier, file, TimeSpan.FromDays(7));
         return blobIdentifier;
     }
 
-    public async Task<Stream> DownloadBlob(string identifier)
+    public async Task<byte[]> DownloadBlob(string identifier)
     {
         var imageFromCache = await _cache.GetImage(identifier);
         if (imageFromCache != null)
@@ -36,10 +36,11 @@ public class EmblemBlobStorageService : IEmblemBlobStorageService
         }
         var blobClient = _blobContainerClient.GetBlobClient(identifier);
         var downloadedBlob = await blobClient.DownloadAsync();
-        var stream = new MemoryStream();
-        await downloadedBlob.Value.Content.CopyToAsync(stream);
-        await _cache.WriteImage(identifier, stream, TimeSpan.FromDays(7));
+        using var memoryStream = new MemoryStream();
+        await downloadedBlob.Value.Content.CopyToAsync(memoryStream);
+        var bytes = memoryStream.ToArray();
+        await _cache.WriteImage(identifier, bytes, TimeSpan.FromDays(7));
         
-        return stream;
+        return bytes;
     }
 }
