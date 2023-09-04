@@ -32,9 +32,11 @@ namespace ArmoredCoreSixEmblemBrowser.Web.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> SearchEmblems(int page, int totalPerPage, string? name, [FromQuery]PlatformType[]? platforms)
         {
-            if (!string.IsNullOrEmpty(name) || platforms != null)
+            if (!string.IsNullOrEmpty(name) || platforms?.Length > 0)
             {
-                // search by name or platforms    
+                var filteredEmblems = await _emblemService
+                    .GetFilteredEmblems(page, totalPerPage, name ?? string.Empty, platforms?.ToList() ?? new List<PlatformType>());
+                return Ok(filteredEmblems);
             }
 
             var emblems = await _emblemService.GetEmblems(page, totalPerPage);

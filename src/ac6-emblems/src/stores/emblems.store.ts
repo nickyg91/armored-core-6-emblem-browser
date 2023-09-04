@@ -2,11 +2,12 @@ import type { IEmblemSearchResult } from '@/models/emblem-search-result.interfac
 import type { Emblem } from '@/models/emblem.model';
 import axios from 'axios';
 import { defineStore } from 'pinia';
-import { reactive, ref } from 'vue';
+import { ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
+import type { PlatformType } from '@/enums/platform-type.enum';
 
 export const useEmblemStore = defineStore('emblemStore', () => {
-  const emblems = reactive<Array<Emblem>>([]);
+  const emblems = ref<Array<Emblem>>([]);
   const currentPageNumber = ref(1);
   const totalPerPage = ref(25);
   const totalEmblems = ref(0);
@@ -23,7 +24,45 @@ export const useEmblemStore = defineStore('emblemStore', () => {
       if (totalEmblems.value === 0) {
         totalEmblems.value = results.data.totalEmblems;
       }
-      emblems.push(...results.data.emblems);
+      emblems.value.push(...results.data.emblems);
+    } catch (error) {
+      console.error(error);
+      toast.add({
+        severity: 'error',
+        detail: 'Error getting emblems.',
+        summary: 'Error',
+        life: 2000
+      });
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  async function getFilteredEmblems(platforms: PlatformType[], nameOrShareId: string) {
+    currentPageNumber.value = 1;
+    emblems.value = [];
+    console.log('get filtered emblems');
+    try {
+      isLoading.value = true;
+      const url = `api/emblem/search/${currentPageNumber.value}/${totalPerPage.value}`;
+
+      const queryString: URLSearchParams = new URLSearchParams();
+
+      if (nameOrShareId) {
+        queryString.append('name', nameOrShareId);
+      }
+
+      if (platforms.length > 0) {
+        platforms.forEach((platform) => {
+          queryString.append('platforms', platform.toString());
+        });
+      }
+      const finalUrl = url + '?' + queryString.toString();
+      const results = await axios.get<IEmblemSearchResult>(finalUrl);
+      if (totalEmblems.value === 0) {
+        totalEmblems.value = results.data.totalEmblems;
+      }
+      emblems.value.push(...results.data.emblems);
     } catch (error) {
       console.error(error);
       toast.add({
@@ -41,7 +80,7 @@ export const useEmblemStore = defineStore('emblemStore', () => {
     try {
       isAddLoading.value = true;
       const addedEmblem = await axios.post('api/emblem/create', emblem);
-      emblems.push(addedEmblem.data);
+      emblems.value.push(addedEmblem.data);
       toast.add({
         severity: 'success',
         detail: 'Emblem created successfully.',
@@ -61,12 +100,18 @@ export const useEmblemStore = defineStore('emblemStore', () => {
     }
   }
 
+  function resetEmblems() {
+    emblems.value = [];
+  }
+
   return {
     emblems,
     currentPageNumber,
     getEmblems,
     addEmblem,
     isLoading,
-    isAddLoading
+    isAddLoading,
+    getFilteredEmblems,
+    resetEmblems
   };
 });

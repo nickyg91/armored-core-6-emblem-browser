@@ -21,6 +21,13 @@ public class EmblemBrowserService : IEmblemBrowserService
         return new EmblemSearchResult(emblems.TotalEmblems, emblems.Emblems.ToList());
     }
 
+    public async Task<EmblemSearchResult> GetFilteredEmblems(int pageNumber, int totalPerPage, string nameOrShareId, List<PlatformType> platforms)
+    {
+        var emblems =
+            await _emblemUnitOfWork.EmblemRepository.SearchEmblems(nameOrShareId, platforms, pageNumber - 1, totalPerPage);
+        return new EmblemSearchResult(emblems.TotalEmblems, emblems.Emblems.ToList());
+    }
+
     public int ReportEmblem(int id)
     {
         throw new NotImplementedException();

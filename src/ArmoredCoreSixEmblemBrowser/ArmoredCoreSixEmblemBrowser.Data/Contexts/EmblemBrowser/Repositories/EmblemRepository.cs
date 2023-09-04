@@ -24,24 +24,33 @@ public class EmblemRepository : IEmblemRepository
         return (emblems, totalEmblems);
     }
 
-    public IEnumerable<Emblem> SearchEmblems(string name, string shareId)
+    public async Task<(IEnumerable<Emblem> Emblems, int TotalEmblems)> SearchEmblems(string nameOrShareId, List<PlatformType> platforms, int pageNumber, int totalPerPage)
     {
         var emblems = new List<Emblem>();
-        if (!string.IsNullOrEmpty(name))
+        if (!string.IsNullOrEmpty(nameOrShareId))
         {
-            var emblemsByName = _context.Emblems.Where(x => x.Name.ToLower().Contains(name.ToLower()));
+            var emblemsByName = _context.Emblems
+                .Where(
+                    x => x.Name.ToLower().Contains(nameOrShareId.ToLower()) 
+                         || x.ShareId.ToLower().Contains(nameOrShareId.ToLower()));
             emblems.AddRange(emblemsByName);
         }
 
-        if (string.IsNullOrEmpty(shareId))
+        if (platforms.Count <= 0)
         {
-            return emblems.DistinctBy(x => x.Id);
+            return (emblems.DistinctBy(x => x.Id).Skip(totalPerPage * pageNumber)
+                .Take(totalPerPage)
+                .OrderByDescending(x => x.CreatedAtUtc), emblems.Count);
         }
-        
-        var emblemsByShareId = _context.Emblems.Where(x => x.ShareId.ToLower().Contains(shareId.ToLower()));
-        emblems.AddRange(emblemsByShareId);
 
-        return emblems.DistinctBy(x => x.Id);
+        var emblemsByPlatform = await _context.Emblems.Where(x => platforms.Contains(x.Platform)).ToListAsync();
+        emblems.AddRange(emblemsByPlatform);
+
+        return (emblems
+            .DistinctBy(x => x.Id)
+            .Skip(totalPerPage * pageNumber)
+            .Take(totalPerPage)
+            .OrderByDescending(x => x.CreatedAtUtc), emblems.Count);
     }
 
     public async Task AddEmblem(Emblem emblem)

@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@vee-validate/zod": "^4.11.3",
+    "@vueuse/core": "^10.4.1",
     "axios": "^1.5.0",
     "cirrus-ui": "^0.7.1",
     "pinia": "^2.1.6",

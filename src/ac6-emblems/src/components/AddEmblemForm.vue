@@ -10,6 +10,7 @@ import { computed, ref } from 'vue';
 import { useEmblemStore } from '@/stores/emblems.store';
 import type { Emblem } from '@/models/emblem.model';
 import Tag from 'primevue/tag';
+import { toMapOfEnumDescriptions } from '@/shared/enum-functions';
 const MAX_FILE_SIZE = 250000;
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 const fileData = ref<string | null>(null);
@@ -44,13 +45,7 @@ const store = useEmblemStore();
 
 const platformValues = Object.keys(PlatformType).filter((key) => isNaN(Number(key)));
 const platformMap = computed(() => {
-  const map = new Map<string, number>();
-  Object.keys(PlatformType)
-    .filter((key) => isNaN(Number(key)))
-    .map((key) => {
-      map.set(key, Number(PlatformType[key as keyof typeof PlatformType]));
-    });
-  return map;
+  return toMapOfEnumDescriptions(PlatformType);
 });
 
 const onSubmit = handleSubmit(async (values) => {

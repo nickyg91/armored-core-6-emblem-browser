@@ -5,7 +5,7 @@ namespace ArmoredCoreSixEmblemBrowser.Data.Contexts.EmblemBrowser.Repositories;
 public interface IEmblemRepository
 {
     Task<(IEnumerable<Emblem> Emblems, int TotalEmblems)> GetPaginatedEmblems(int pageNumber, int totalPerPage);
-    IEnumerable<Emblem> SearchEmblems(string name, string shareId);
+    Task<(IEnumerable<Emblem> Emblems, int TotalEmblems)> SearchEmblems(string nameOrShareId, List<PlatformType> platforms, int pageNumber, int totalPerPage);
     Task AddEmblem(Emblem emblem);
     Task RemoveEmblem(int id);
     Task<Emblem?> GetById(int id);

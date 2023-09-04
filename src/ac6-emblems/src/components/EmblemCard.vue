@@ -29,7 +29,9 @@ function getPlatformName(platform: PlatformType): string {
 <template>
   <Card class="card-container">
     <template v-if="emblem.imageUrl" #header>
-      <ImageContainer :id="emblem.id" :name="emblem.name"></ImageContainer>
+      <Suspense>
+        <ImageContainer :key="emblem.imageUrl" :id="emblem.id" :name="emblem.name"></ImageContainer>
+      </Suspense>
     </template>
     <template #title> {{ emblem.name }} </template>
     <template #subtitle>

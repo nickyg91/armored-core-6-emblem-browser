@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios';
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import ProgressSpinner from 'primevue/progressspinner';
 const props = defineProps<{ id: number; name: string }>();
 const isLoading = ref(false);
@@ -13,9 +13,7 @@ async function loadImage() {
         responseType: 'blob'
       })
     ).data;
-    console.log(blob);
     const url = URL.createObjectURL(blob);
-    console.log(url);
     image.value = url;
   } catch (error) {
     //nothing right now
@@ -25,6 +23,10 @@ async function loadImage() {
 }
 onMounted(async () => {
   await loadImage();
+});
+
+onUnmounted(() => {
+  URL.revokeObjectURL(image.value);
 });
 </script>
 <template>
