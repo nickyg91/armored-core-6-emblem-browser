@@ -60,7 +60,7 @@ onMounted(async () => {
         <InputText
           v-model="filterCriteria.nameOrShareId"
           class="mr-5"
-          style="width: 95%"
+          style="width: 93%"
           placeholder="Search Name, ShareId"
         ></InputText>
         <Button
