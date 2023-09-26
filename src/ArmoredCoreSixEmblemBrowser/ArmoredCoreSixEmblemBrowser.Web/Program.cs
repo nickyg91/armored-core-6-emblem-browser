@@ -63,4 +63,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapFallbackToFile("index.html");
+// not great but we do what we must and i do not feel like making a migration program.
+using (var serviceScope = app.Services.CreateScope())
+{
+    var context = serviceScope.ServiceProvider.GetRequiredService<EmblemBrowserContext>();
+    context.Database.Migrate();
+}
+
 app.Run();
