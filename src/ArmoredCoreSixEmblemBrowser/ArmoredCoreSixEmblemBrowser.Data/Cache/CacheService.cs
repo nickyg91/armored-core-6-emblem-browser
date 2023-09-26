@@ -53,14 +53,6 @@ public class CacheService : ICacheService
         {
             return null;
         }
-        // var stream = new MemoryStream();
-        // await stream.WriteAsync(bytes);
-        // if (stream.Position != 0 && stream.CanSeek)
-        // {
-        //     stream.Seek(0, SeekOrigin.Begin);    
-        // }
-        
         return bytes;
     }
-    
 }

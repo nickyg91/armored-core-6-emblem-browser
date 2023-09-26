@@ -56,20 +56,22 @@ onMounted(async () => {
 <template>
   <section>
     <div class="grid">
-      <div class="col-12">
+      <div class="col-12 lg:col-11 md:col-11 sm:col-12">
         <InputText
           v-model="filterCriteria.nameOrShareId"
           class="mr-5"
           style="width: 93%"
           placeholder="Search Name, ShareId"
         ></InputText>
+      </div>
+      <div class="col-12 lg:col-1 md:col-1 sm:col-12">
         <Button
           @click="showAddEmblemComponent()"
           icon="pi pi-plus"
-          rounded
           aria-label="Add"
           severity="primary"
-          class="mr-5"
+          label="Add"
+          style="width: 100%"
         >
         </Button>
       </div>
