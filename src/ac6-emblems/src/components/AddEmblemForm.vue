@@ -2,7 +2,7 @@
 import { PlatformType } from '@/enums/platform-type.enum';
 import { toTypedSchema } from '@vee-validate/zod';
 import { Form, useForm } from 'vee-validate';
-import { any, nativeEnum, object, string } from 'zod';
+import { any, array, nativeEnum, object, string, z } from 'zod';
 import InputText from 'primevue/inputtext';
 import RadioButton from 'primevue/radiobutton';
 import Button from 'primevue/button';
@@ -11,6 +11,7 @@ import { useEmblemStore } from '@/stores/emblems.store';
 import type { Emblem } from '@/models/emblem.model';
 import Tag from 'primevue/tag';
 import { toMapOfEnumDescriptions } from '@/shared/enum-functions';
+import Chips from 'primevue/chips';
 const MAX_FILE_SIZE = 250000;
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 const fileData = ref<string | null>(null);
@@ -31,7 +32,10 @@ const { defineComponentBinds, handleSubmit, errors, resetField } = useForm({
         .refine(() => ACCEPTED_IMAGE_TYPES.includes(file.value?.type ?? '')),
       platform: nativeEnum(PlatformType, {
         required_error: 'Platform is required.'
-      })
+      }),
+      tags: array(z.string())
+        .nonempty('At least one tag is required.')
+        .max(10, 'Cannot exceed more than 10 tags.')
     })
   )
 });
@@ -40,6 +44,7 @@ const name = defineComponentBinds('name');
 const shareId = defineComponentBinds('shareId');
 const imageData = defineComponentBinds('imageData');
 const platformValue = defineComponentBinds('platform');
+const tags = defineComponentBinds('tags');
 
 const store = useEmblemStore();
 
@@ -49,7 +54,8 @@ const platformMap = computed(() => {
 });
 
 const onSubmit = handleSubmit(async (values) => {
-  const emblem = values as Emblem;
+  // for now.
+  const emblem = values as unknown as Emblem;
   emblem.imageData = fileData.value!;
   emblem.imageExtension = file.value!.type;
   await store.addEmblem(emblem);
@@ -87,10 +93,26 @@ function removeFile() {
     <div class="field mb-5">
       <span class="p-float-label">
         <InputText style="width: 100%" v-bind="shareId" :class="{ 'p-invalid': errors.shareId }" />
-        <label for="name">Share ID</label>
+        <label for="shareId">Share ID</label>
       </span>
       <small id="shareId-help" class="p-error">
         {{ errors.shareId }}
+      </small>
+    </div>
+    <div class="field mb-5">
+      <span class="p-float-label p-fluid">
+        <Chips
+          v-bind="tags"
+          :class="{ 'p-invalid': errors.tags }"
+          :allow-duplicate="false"
+          :max="10"
+          :separator="' '"
+          name="tags"
+        ></Chips>
+        <label for="tags">Tags</label>
+      </span>
+      <small id="tags-help" class="p-error">
+        {{ errors.tags }}
       </small>
     </div>
     <div class="field mb-5">
@@ -103,7 +125,7 @@ function removeFile() {
           @change="onFileChanged"
           :class="{ 'p-invalid': errors.imageData }"
         />
-        <label for="name">Image</label>
+        <label for="imageData">Image</label>
       </span>
       <small id="image-help" class="p-error">
         {{ errors.imageData }}
@@ -119,7 +141,10 @@ function removeFile() {
         </Tag>
       </div>
     </div>
-    <div class="field flex justify-content-evenly">
+    <div
+      :class="{ 'p-invalid-section': errors.platform }"
+      class="field flex justify-content-evenly"
+    >
       <template v-for="platform in platformValues" :key="platform">
         <div>
           <RadioButton v-bind="platformValue" name="platform" :value="platformMap.get(platform)">
@@ -140,3 +165,10 @@ function removeFile() {
     </div>
   </Form>
 </template>
+<style scoped lang="css">
+.p-invalid-section {
+  border: 1px solid var(--red-300);
+  border-radius: 5px;
+  padding: 0.75em;
+}
+</style>

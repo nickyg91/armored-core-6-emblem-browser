@@ -65,5 +65,6 @@ public class EmblemEntityConfiguration : IEntityTypeConfiguration<Emblem>
             .HasMaxLength(24);
         
         builder.Ignore(x => x.ImageData);
+        builder.Ignore(x => x.Tags);
     }
 }

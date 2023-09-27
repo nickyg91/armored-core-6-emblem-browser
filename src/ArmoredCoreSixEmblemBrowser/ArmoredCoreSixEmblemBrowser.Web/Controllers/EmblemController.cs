@@ -50,5 +50,11 @@ namespace ArmoredCoreSixEmblemBrowser.Web.Controllers
             var data = await _emblemService.GetEmblemImage(id);
             return File(data.ImageData, data.Extension);
         }
+
+        [HttpGet("tags")]
+        public async Task<IActionResult> GetAllTags()
+        {
+            return Ok(await _emblemService.GetAllTags());
+        }
     }
 }

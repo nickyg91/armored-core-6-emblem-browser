@@ -14,6 +14,7 @@ export const useEmblemStore = defineStore('emblemStore', () => {
   const toast = useToast();
   const isLoading = ref(false);
   const isAddLoading = ref(false);
+  const tags = ref<Array<string>>([]);
 
   async function getEmblems(): Promise<void> {
     try {
@@ -100,6 +101,21 @@ export const useEmblemStore = defineStore('emblemStore', () => {
     }
   }
 
+  async function getAllTags(): Promise<void> {
+    try {
+      const allTags = await axios.get('api/emblem/tags');
+      tags.value = allTags.data;
+    } catch (error) {
+      console.error(error);
+      toast.add({
+        severity: 'error',
+        detail: 'Error getting emblems.',
+        summary: 'Error',
+        life: 2000
+      });
+    }
+  }
+
   function resetEmblems() {
     emblems.value = [];
   }
@@ -112,6 +128,7 @@ export const useEmblemStore = defineStore('emblemStore', () => {
     isLoading,
     isAddLoading,
     getFilteredEmblems,
-    resetEmblems
+    resetEmblems,
+    getAllTags
   };
 });

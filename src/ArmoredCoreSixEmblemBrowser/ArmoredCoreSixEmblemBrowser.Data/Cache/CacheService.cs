@@ -1,10 +1,6 @@
-using System.Collections;
-using System.Text;
-using System.Text.Json;
 using ArmoredCoreSixEmblemBrowser.Core.Configuration;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
-using System;
 
 namespace ArmoredCoreSixEmblemBrowser.Data.Cache;
 
@@ -54,5 +50,30 @@ public class CacheService : ICacheService
             return null;
         }
         return bytes;
+    }
+
+    public async Task<List<string>> GetTagsForEmblem(string key)
+    {
+        var tags = await Database.SetMembersAsync(key);
+        return tags.Select(x => x.ToString()).ToList();
+    }
+
+    public async Task SetTagsForEmblem(string key, List<string> tags)
+    {
+        var tasks = tags.Select(tag => Database.SetAddAsync("tags", tag.ToLower())).Cast<Task>().ToList();
+        tasks.AddRange(tags.Select(tag => Database.SetAddAsync(key, tag.ToLower())).Cast<Task>().ToList());
+        await Task.WhenAll(tasks);
+    }
+
+    public async Task AddTagsToSet(List<string> tags)
+    {
+        var tasks = tags.Select(tag => Database.SetAddAsync("tags", tag.ToLower())).Cast<Task>().ToList();
+        await Task.WhenAll(tasks);
+    }
+
+    public async Task<List<string>> GetAllTags()
+    {
+        var tags = await Database.SetMembersAsync("tags");
+        return tags.Select(x => x.ToString()).ToList();
     }
 }

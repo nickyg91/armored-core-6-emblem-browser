@@ -8,4 +8,8 @@ public interface ICacheService
     IDatabase Database { get; }
     Task WriteImage(string key, byte[] imageData, TimeSpan ttl);
     Task<byte[]?> GetImage(string key);
+    Task<List<string>> GetTagsForEmblem(string key);
+    Task SetTagsForEmblem(string key, List<string> tags);
+    Task AddTagsToSet(List<string> tags);
+    Task<List<string>> GetAllTags();
 }

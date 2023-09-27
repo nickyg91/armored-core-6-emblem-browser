@@ -11,4 +11,5 @@ public class Emblem
     public DateTimeOffset CreatedAtUtc { get; set; }
     public string ImageData { get; set; }
     public string ImageExtension { get; set; }
+    public List<string> Tags { get; set; }
 }

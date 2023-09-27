@@ -13,4 +13,5 @@ public interface IEmblemBrowserService
     public Task<bool> DeleteEmblem(int id);
     public Task<Emblem> AddEmblem(Emblem emblem);
     public Task<(byte[] ImageData, string Extension)> GetEmblemImage(int id);
+    Task<List<string>> GetAllTags();
 }

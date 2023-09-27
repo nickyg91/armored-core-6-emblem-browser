@@ -51,32 +51,32 @@ watchDebounced(
 
 onMounted(async () => {
   await store.getEmblems();
+  await store.getAllTags();
 });
 </script>
 <template>
   <section>
-    <div class="grid">
-      <div class="col-12 lg:col-11 md:col-11 sm:col-12">
+    <div class="flex">
+      <div style="width: 93%" class="flex-grow-1 mr-5">
         <InputText
           v-model="filterCriteria.nameOrShareId"
           class="mr-5"
-          style="width: 93%"
           placeholder="Search Name, ShareId"
+          style="width: 100%"
         ></InputText>
       </div>
-      <div class="col-12 lg:col-1 md:col-1 sm:col-12">
+      <div class="flex-grow-1">
         <Button
           @click="showAddEmblemComponent()"
           icon="pi pi-plus"
           aria-label="Add"
           severity="primary"
           label="Add"
-          style="width: 100%"
         >
         </Button>
       </div>
     </div>
-    <div class="flex justify-content-evenly">
+    <div class="flex justify-content-evenly mt-3">
       <div class="flex" v-for="item in platforms" :key="item.value">
         <Checkbox
           @click="onCheckboxClicked(item.value)"

@@ -10,4 +10,5 @@ export class Emblem {
   id!: number;
   imageData!: string;
   imageExtension!: string;
+  tags!: string[];
 }

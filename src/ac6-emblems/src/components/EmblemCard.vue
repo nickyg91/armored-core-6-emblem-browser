@@ -40,6 +40,12 @@ function getPlatformName(platform: PlatformType): string {
     </template>
     <template #content>
       <h2>{{ emblem.shareId }}</h2>
+      <h3 v-if="emblem.tags.length > 0">Tags</h3>
+      <div class="flex flex-wrap">
+        <div class="m-2" v-for="tag in emblem.tags" :key="tag">
+          <Tag severity="info" :value="tag"> </Tag>
+        </div>
+      </div>
     </template>
   </Card>
 </template>

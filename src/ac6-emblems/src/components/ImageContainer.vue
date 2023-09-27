@@ -33,7 +33,7 @@ onUnmounted(() => {
   <div class="img flex align-items-center justify-content-center spinner" v-if="isLoading">
     <ProgressSpinner></ProgressSpinner>
   </div>
-  <div v-else>
+  <div class="img-container" v-else>
     <img class="img" :src="image" :alt="'image for ' + name" />
   </div>
 </template>
@@ -41,10 +41,15 @@ onUnmounted(() => {
 <style scoped>
 .img {
   width: 100%;
-  height: 100%;
+  height: 165px;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
   animation: fadeIn 3s;
+}
+
+.img-container {
+  width: 100%;
+  height: 100%;
 }
 
 .spinner {
