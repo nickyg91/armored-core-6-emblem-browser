@@ -15,17 +15,32 @@ export const useEmblemStore = defineStore('emblemStore', () => {
   const isLoading = ref(false);
   const isAddLoading = ref(false);
   const tags = ref<Array<string>>([]);
+  const hasInFlightRequest = ref(false);
+
+  axios.interceptors.request.use((config) => {
+    hasInFlightRequest.value = true;
+    return config;
+  });
+
+  axios.interceptors.response.use((config) => {
+    hasInFlightRequest.value = false;
+    return config;
+  });
 
   async function getEmblems(): Promise<void> {
     try {
+      if (totalEmblems.value === emblems.value.length && emblems.value.length !== 0) {
+        return;
+      }
       isLoading.value = true;
       const results = await axios.get<IEmblemSearchResult>(
         `api/emblem/search/${currentPageNumber.value}/${totalPerPage.value}`
       );
-      if (totalEmblems.value === 0) {
-        totalEmblems.value = results.data.totalEmblems;
-      }
-      emblems.value.push(...results.data.emblems);
+      totalEmblems.value = results.data.totalEmblems;
+
+      results.data.emblems.forEach((emblem) => {
+        emblems.value.push(emblem);
+      });
     } catch (error) {
       console.error(error);
       toast.add({
@@ -42,7 +57,6 @@ export const useEmblemStore = defineStore('emblemStore', () => {
   async function getFilteredEmblems(platforms: PlatformType[], nameOrShareId: string) {
     currentPageNumber.value = 1;
     emblems.value = [];
-    console.log('get filtered emblems');
     try {
       isLoading.value = true;
       const url = `api/emblem/search/${currentPageNumber.value}/${totalPerPage.value}`;
@@ -129,6 +143,7 @@ export const useEmblemStore = defineStore('emblemStore', () => {
     isAddLoading,
     getFilteredEmblems,
     resetEmblems,
-    getAllTags
+    getAllTags,
+    hasInFlightRequest
   };
 });
