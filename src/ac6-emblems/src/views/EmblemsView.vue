@@ -12,12 +12,16 @@ import { toArrayOfEnumDescriptions } from '@/shared/enum-functions';
 import Checkbox from 'primevue/checkbox';
 import { useDebounceFn, watchDebounced } from '@vueuse/core';
 import Card from 'primevue/card';
+import MultiSelect from 'primevue/multiselect';
 
 const store = useEmblemStore();
 
+const tags = store.tags;
+
 const filterCriteria = reactive({
   platforms: new Array<PlatformType>(),
-  nameOrShareId: ''
+  nameOrShareId: '',
+  tags: new Array<string>()
 });
 
 const platforms = toArrayOfEnumDescriptions(PlatformType);
@@ -92,15 +96,29 @@ const onScrollDebounced = useDebounceFn(async (e) => {
               </Button>
             </div>
           </div>
-          <div class="flex justify-content-evenly mt-3">
-            <div class="flex" v-for="item in platforms" :key="item.value">
+          <div class="flex justify-content-evenly mt-5">
+            <div class="flex align-items-center mr-1" v-for="item in platforms" :key="item.value">
               <Checkbox
                 @click="onCheckboxClicked(item.value)"
                 :name="item.key"
                 :binary="true"
+                :input-id="item.key"
                 v-bind:model-value="filterCriteria.platforms.indexOf(item.value) > -1"
               ></Checkbox>
-              <label :for="item.key" class="ml-2">{{ item.key }}</label>
+              <label :for="item.key" class="ml-2">
+                {{ item.key }}
+              </label>
+            </div>
+            <div class="flex align-items-center">
+              <span class="p-float-label">
+                <MultiSelect
+                  style="width: 15rem"
+                  id="ms-tags"
+                  v-model="filterCriteria.tags"
+                  :options="tags"
+                />
+                <label for="ms-tags">Tags</label>
+              </span>
             </div>
           </div>
         </template>

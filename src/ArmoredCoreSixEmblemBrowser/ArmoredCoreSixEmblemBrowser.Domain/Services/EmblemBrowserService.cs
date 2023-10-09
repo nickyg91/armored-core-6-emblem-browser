@@ -69,7 +69,7 @@ public class EmblemBrowserService : IEmblemBrowserService
         emblem.ImageUrl = blobIdentifier;
         await _emblemUnitOfWork.EmblemRepository.AddEmblem(emblem);
         await _emblemUnitOfWork.SaveChanges();
-        await _cache.SetTagsForEmblem($"{emblem.Id}:tags", emblem.Tags);
+        await _cache.SetTagsForEmblem(emblem.Id.ToString(), emblem.Tags);
         return emblem;
     }
 

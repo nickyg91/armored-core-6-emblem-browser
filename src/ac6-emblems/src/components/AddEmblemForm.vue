@@ -11,7 +11,9 @@ import { useEmblemStore } from '@/stores/emblems.store';
 import type { Emblem } from '@/models/emblem.model';
 import Tag from 'primevue/tag';
 import { toMapOfEnumDescriptions } from '@/shared/enum-functions';
-import Chips from 'primevue/chips';
+import Chips, { type ChipsAddEvent } from 'primevue/chips';
+import MultiSelect from 'primevue/multiselect';
+
 const MAX_FILE_SIZE = 250000;
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 const fileData = ref<string | null>(null);
@@ -39,15 +41,17 @@ const { defineComponentBinds, handleSubmit, errors, resetField } = useForm({
     })
   )
 });
-
 const name = defineComponentBinds('name');
 const shareId = defineComponentBinds('shareId');
 const imageData = defineComponentBinds('imageData');
 const platformValue = defineComponentBinds('platform');
 const tags = defineComponentBinds('tags');
 
+const msTags = ref<string[]>([]);
+
 const store = useEmblemStore();
 
+const tagOptions = store.tags;
 const platformValues = Object.keys(PlatformType).filter((key) => isNaN(Number(key)));
 const platformMap = computed(() => {
   return toMapOfEnumDescriptions(PlatformType);
@@ -78,6 +82,18 @@ function removeFile() {
   file.value = null;
   resetField('imageData');
 }
+
+function tagAdded(evt: ChipsAddEvent): void {
+  console.log('tag added', evt.value);
+  if (tagOptions.indexOf(evt.value) < -1) {
+    msTags.value.push(evt.value);
+    tags.value.modelValue?.push(evt.value);
+  }
+}
+
+// function tagRemoved(evt: ChipsAddEvent): void {
+
+// }
 </script>
 <template>
   <Form>
@@ -101,15 +117,27 @@ function removeFile() {
     </div>
     <div class="field mb-5">
       <span class="p-float-label p-fluid">
-        <Chips
-          v-bind="tags"
-          :class="{ 'p-invalid': errors.tags }"
-          :allow-duplicate="false"
-          :max="10"
-          :separator="' '"
-          name="tags"
-        ></Chips>
-        <label for="tags">Tags</label>
+        <span class="p-float-label">
+          <MultiSelect
+            :class="{ 'p-invalid': errors.tags }"
+            name="tags"
+            v-bind="tags"
+            :options="tagOptions"
+          >
+            <template #header>
+              <div class="p-fluid">
+                <Chips
+                  v-bind="msTags"
+                  :allow-duplicate="false"
+                  :max="10"
+                  :separator="' '"
+                  name="msTags"
+                ></Chips>
+              </div>
+            </template>
+          </MultiSelect>
+          <label for="tags">Tags</label>
+        </span>
       </span>
       <small id="tags-help" class="p-error">
         {{ errors.tags }}

@@ -61,7 +61,7 @@ public class CacheService : ICacheService
     public async Task SetTagsForEmblem(string key, List<string> tags)
     {
         var tasks = tags.Select(tag => Database.SetAddAsync("tags", tag.ToLower())).Cast<Task>().ToList();
-        tasks.AddRange(tags.Select(tag => Database.SetAddAsync(key, tag.ToLower())).Cast<Task>().ToList());
+        tasks.AddRange(tags.Select(tag => Database.SetAddAsync(tag.ToLower(), key)).Cast<Task>().ToList());
         await Task.WhenAll(tasks);
     }
 

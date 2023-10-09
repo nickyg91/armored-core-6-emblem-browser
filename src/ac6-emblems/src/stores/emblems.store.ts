@@ -102,6 +102,10 @@ export const useEmblemStore = defineStore('emblemStore', () => {
         summary: 'Created',
         life: 2000
       });
+      const containsNewTags = tags.value.filter((x) => emblem.tags.indexOf(x) < 0).length > 0;
+      if (containsNewTags) {
+        await getAllTags();
+      }
     } catch (error) {
       console.error(error);
       toast.add({
@@ -144,6 +148,7 @@ export const useEmblemStore = defineStore('emblemStore', () => {
     getFilteredEmblems,
     resetEmblems,
     getAllTags,
-    hasInFlightRequest
+    hasInFlightRequest,
+    tags
   };
 });
