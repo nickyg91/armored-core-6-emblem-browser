@@ -122,7 +122,11 @@ export const useEmblemStore = defineStore('emblemStore', () => {
   async function getAllTags(): Promise<void> {
     try {
       const allTags = await axios.get('api/emblem/tags');
-      tags.value = allTags.data;
+      if (allTags.data.length < 1) {
+        tags.value = ['videogames', 'anime', 'meme', 'logo', 'symbol'];
+      } else {
+        tags.value = allTags.data;
+      }
     } catch (error) {
       console.error(error);
       toast.add({

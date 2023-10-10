@@ -11,8 +11,7 @@ import { useEmblemStore } from '@/stores/emblems.store';
 import type { Emblem } from '@/models/emblem.model';
 import Tag from 'primevue/tag';
 import { toMapOfEnumDescriptions } from '@/shared/enum-functions';
-import Chips, { type ChipsAddEvent } from 'primevue/chips';
-import MultiSelect from 'primevue/multiselect';
+import AutoComplete, { type AutoCompleteCompleteEvent } from 'primevue/autocomplete';
 
 const MAX_FILE_SIZE = 250000;
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
@@ -46,16 +45,13 @@ const shareId = defineComponentBinds('shareId');
 const imageData = defineComponentBinds('imageData');
 const platformValue = defineComponentBinds('platform');
 const tags = defineComponentBinds('tags');
-
-const msTags = ref<string[]>([]);
-
 const store = useEmblemStore();
-
-const tagOptions = store.tags;
 const platformValues = Object.keys(PlatformType).filter((key) => isNaN(Number(key)));
 const platformMap = computed(() => {
   return toMapOfEnumDescriptions(PlatformType);
 });
+
+const filteredSuggestions = ref<string[]>([...store.tags]);
 
 const onSubmit = handleSubmit(async (values) => {
   // for now.
@@ -82,18 +78,21 @@ function removeFile() {
   file.value = null;
   resetField('imageData');
 }
-
-function tagAdded(evt: ChipsAddEvent): void {
-  console.log('tag added', evt.value);
-  if (tagOptions.indexOf(evt.value) < -1) {
-    msTags.value.push(evt.value);
-    tags.value.modelValue?.push(evt.value);
+function tagQuery(event: AutoCompleteCompleteEvent) {
+  const query = event.query;
+  if (query.length === 0) {
+    filteredSuggestions.value = [...store.tags];
   }
+  const filtered: string[] = [query];
+
+  store.tags.forEach((item) => {
+    if (item.indexOf(query.toLowerCase()) === 0) {
+      filtered.push(query);
+    }
+  });
+
+  filteredSuggestions.value = filtered;
 }
-
-// function tagRemoved(evt: ChipsAddEvent): void {
-
-// }
 </script>
 <template>
   <Form>
@@ -118,24 +117,13 @@ function tagAdded(evt: ChipsAddEvent): void {
     <div class="field mb-5">
       <span class="p-float-label p-fluid">
         <span class="p-float-label">
-          <MultiSelect
-            :class="{ 'p-invalid': errors.tags }"
-            name="tags"
+          <AutoComplete
             v-bind="tags"
-            :options="tagOptions"
-          >
-            <template #header>
-              <div class="p-fluid">
-                <Chips
-                  v-bind="msTags"
-                  :allow-duplicate="false"
-                  :max="10"
-                  :separator="' '"
-                  name="msTags"
-                ></Chips>
-              </div>
-            </template>
-          </MultiSelect>
+            multiple
+            :suggestions="filteredSuggestions"
+            @complete="tagQuery"
+            :class="{ 'p-invalid': errors.tags }"
+          />
           <label for="tags">Tags</label>
         </span>
       </span>
