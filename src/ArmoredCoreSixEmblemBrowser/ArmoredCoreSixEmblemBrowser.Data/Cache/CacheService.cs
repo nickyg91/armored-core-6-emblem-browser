@@ -37,7 +37,7 @@ public class CacheService : ICacheService
         return muxer;
     }
     
-    public async Task WriteImage(string key, byte[] imageData, TimeSpan ttl)
+    public async Task WriteImage(string key, byte[] imageData, TimeSpan? ttl = null)
     {
         await Database.StringSetAsync(key, imageData, ttl);
     }
@@ -54,7 +54,7 @@ public class CacheService : ICacheService
 
     public async Task<List<string>> GetTagsForEmblem(string key)
     {
-        var tags = await Database.SetMembersAsync(key);
+        var tags = await Database.SetMembersAsync($"{key}:tags");
         return tags.Select(x => x.ToString()).ToList();
     }
 
@@ -62,6 +62,7 @@ public class CacheService : ICacheService
     {
         var tasks = tags.Select(tag => Database.SetAddAsync("tags", tag.ToLower())).Cast<Task>().ToList();
         tasks.AddRange(tags.Select(tag => Database.SetAddAsync(tag.ToLower(), key)).Cast<Task>().ToList());
+        tasks.AddRange(tags.Select(tag => Database.SetAddAsync($"{key}:tags", tag)).Cast<Task>().ToList());
         await Task.WhenAll(tasks);
     }
 
@@ -75,5 +76,21 @@ public class CacheService : ICacheService
     {
         var tags = await Database.SetMembersAsync("tags");
         return tags.Select(x => x.ToString()).ToList();
+    }
+
+    public async Task<List<int>> GetFilteredEmblemsByTags(List<string> tags)
+    {
+        var tasks = tags.Select(tag => Database.SetMembersAsync(tag)).ToList();
+        var result = (await Task.WhenAll(tasks)).ToList();
+        if (!result.Any())
+        {
+            return new List<int>();
+        }
+        var ids = result
+            .SelectMany(x => x)
+            .Select(x => (int)x)
+            .Distinct()
+            .ToList();
+        return ids;
     }
 }

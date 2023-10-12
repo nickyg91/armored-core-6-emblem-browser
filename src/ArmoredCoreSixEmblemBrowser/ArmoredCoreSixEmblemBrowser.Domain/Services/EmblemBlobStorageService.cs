@@ -23,7 +23,7 @@ public class EmblemBlobStorageService : IEmblemBlobStorageService
         var blobIdentifier = $"ac6-emblem-{id}-{name}";
         var blockBlobClient = _blobContainerClient.GetBlockBlobClient(blobIdentifier);
         await blockBlobClient.UploadAsync(stream);
-        await _cache.WriteImage(blobIdentifier, file, TimeSpan.FromDays(7));
+        await _cache.WriteImage(blobIdentifier, file);
         return blobIdentifier;
     }
 

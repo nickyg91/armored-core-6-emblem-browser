@@ -54,7 +54,11 @@ export const useEmblemStore = defineStore('emblemStore', () => {
     }
   }
 
-  async function getFilteredEmblems(platforms: PlatformType[], nameOrShareId: string) {
+  async function getFilteredEmblems(
+    platforms: PlatformType[],
+    nameOrShareId: string,
+    tags: string[]
+  ) {
     currentPageNumber.value = 1;
     emblems.value = [];
     try {
@@ -72,6 +76,13 @@ export const useEmblemStore = defineStore('emblemStore', () => {
           queryString.append('platforms', platform.toString());
         });
       }
+
+      if (tags.length > 0) {
+        tags.forEach((tag) => {
+          queryString.append('tags', tag);
+        });
+      }
+
       const finalUrl = url + '?' + queryString.toString();
       const results = await axios.get<IEmblemSearchResult>(finalUrl);
       if (totalEmblems.value === 0) {
@@ -103,7 +114,7 @@ export const useEmblemStore = defineStore('emblemStore', () => {
         life: 2000
       });
       const containsNewTags = tags.value.filter((x) => emblem.tags.indexOf(x) < 0).length > 0;
-      if (containsNewTags) {
+      if (containsNewTags || tags.value.length === 0) {
         await getAllTags();
       }
     } catch (error) {
@@ -122,11 +133,7 @@ export const useEmblemStore = defineStore('emblemStore', () => {
   async function getAllTags(): Promise<void> {
     try {
       const allTags = await axios.get('api/emblem/tags');
-      if (allTags.data.length < 1) {
-        tags.value = ['videogames', 'anime', 'meme', 'logo', 'symbol'];
-      } else {
-        tags.value = allTags.data;
-      }
+      tags.value = allTags.data;
     } catch (error) {
       console.error(error);
       toast.add({

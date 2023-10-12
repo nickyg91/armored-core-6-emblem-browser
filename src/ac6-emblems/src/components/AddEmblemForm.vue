@@ -17,6 +17,7 @@ const MAX_FILE_SIZE = 250000;
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 const fileData = ref<string | null>(null);
 const file = ref<File | null>(null);
+const emit = defineEmits<{ (e: 'addComplete'): void }>();
 const { defineComponentBinds, handleSubmit, errors, resetField } = useForm({
   validationSchema: toTypedSchema(
     object({
@@ -59,6 +60,7 @@ const onSubmit = handleSubmit(async (values) => {
   emblem.imageData = fileData.value!;
   emblem.imageExtension = file.value!.type;
   await store.addEmblem(emblem);
+  emit('addComplete');
 });
 
 function onFileChanged($event: Event) {
@@ -86,8 +88,8 @@ function tagQuery(event: AutoCompleteCompleteEvent) {
   const filtered: string[] = [query];
 
   store.tags.forEach((item) => {
-    if (item.indexOf(query.toLowerCase()) === 0) {
-      filtered.push(query);
+    if (item.indexOf(query.toLowerCase()) > -1) {
+      filtered.push(item);
     }
   });
 

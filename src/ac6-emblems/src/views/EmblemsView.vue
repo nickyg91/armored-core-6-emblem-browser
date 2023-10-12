@@ -16,8 +16,6 @@ import MultiSelect from 'primevue/multiselect';
 
 const store = useEmblemStore();
 
-const tags = store.tags;
-
 const filterCriteria = reactive({
   platforms: new Array<PlatformType>(),
   nameOrShareId: '',
@@ -43,12 +41,20 @@ function onCheckboxClicked(val: number) {
 watchDebounced(
   filterCriteria,
   async () => {
-    if (!filterCriteria.nameOrShareId && filterCriteria.platforms.length == 0) {
+    if (
+      !filterCriteria.nameOrShareId &&
+      filterCriteria.platforms.length === 0 &&
+      filterCriteria.tags.length === 0
+    ) {
       store.resetEmblems();
       await store.getEmblems();
     } else {
       store.resetEmblems();
-      await store.getFilteredEmblems(filterCriteria.platforms, filterCriteria.nameOrShareId);
+      await store.getFilteredEmblems(
+        filterCriteria.platforms,
+        filterCriteria.nameOrShareId,
+        filterCriteria.tags
+      );
     }
   },
   { debounce: 500, maxWait: 1000, deep: true }
@@ -70,6 +76,10 @@ const onScrollDebounced = useDebounceFn(async (e) => {
     }
   });
 }, 1000);
+
+function onAddSuccess(): void {
+  isAddEmblemShown.value = false;
+}
 </script>
 <template>
   <section>
@@ -97,12 +107,16 @@ const onScrollDebounced = useDebounceFn(async (e) => {
             </div>
           </div>
           <div class="flex justify-content-evenly mt-5">
-            <div class="flex align-items-center mr-1" v-for="item in platforms" :key="item.value">
+            <div
+              class="flex align-items-center mr-1"
+              v-for="item in platforms"
+              :key="item.value + '-filter'"
+            >
               <Checkbox
                 @click="onCheckboxClicked(item.value)"
-                :name="item.key"
+                :name="item.key + '-filter'"
                 :binary="true"
-                :input-id="item.key"
+                :input-id="item.key + '-filter'"
                 v-bind:model-value="filterCriteria.platforms.indexOf(item.value) > -1"
               ></Checkbox>
               <label :for="item.key" class="ml-2">
@@ -115,7 +129,7 @@ const onScrollDebounced = useDebounceFn(async (e) => {
                   style="width: 15rem"
                   id="ms-tags"
                   v-model="filterCriteria.tags"
-                  :options="tags"
+                  :options="store.tags"
                 />
                 <label for="ms-tags">Tags</label>
               </span>
@@ -149,7 +163,7 @@ const onScrollDebounced = useDebounceFn(async (e) => {
       header="Add Emblem"
       :style="{ width: '50vw' }"
     >
-      <AddEmblemForm></AddEmblemForm>
+      <AddEmblemForm @add-complete="onAddSuccess"></AddEmblemForm>
     </Dialog>
   </section>
 </template>

@@ -26,20 +26,34 @@ public class EmblemBrowserService : IEmblemBrowserService
         var emblems = await _emblemUnitOfWork.EmblemRepository.GetPaginatedEmblems(pageNumber - 1, totalPerPage);
         foreach (var emblem in emblems.Emblems)
         {
-            var tags = await _cache.GetTagsForEmblem($"{emblem.Id}:tags");
+            var tags = await _cache.GetTagsForEmblem(emblem.Id.ToString());
             emblem.Tags = tags;
         }
         return new EmblemSearchResult(emblems.TotalEmblems, emblems.Emblems.ToList());
     }
 
-    public async Task<EmblemSearchResult> GetFilteredEmblems(int pageNumber, int totalPerPage, string nameOrShareId, List<PlatformType> platforms)
+    public async Task<EmblemSearchResult> GetFilteredEmblems(
+        int pageNumber, 
+        int totalPerPage, 
+        string nameOrShareId, 
+        List<PlatformType> platforms,
+        List<string> tags)
     {
         var emblems =
             await _emblemUnitOfWork.EmblemRepository.SearchEmblems(nameOrShareId, platforms, pageNumber - 1, totalPerPage);
+        if (tags.Any())
+        {
+            var emblemIdsByTag = await _cache.GetFilteredEmblemsByTags(tags);
+            var emblemsFilteredByTag = emblems.Emblems.Where(x => emblemIdsByTag.Contains(x.Id)).ToList();
+            
+            emblems.Emblems = emblemsFilteredByTag;
+            emblems.TotalEmblems = emblemsFilteredByTag.Count;
+        }
+        
         foreach (var emblem in emblems.Emblems)
         {
-            var tags = await _cache.GetTagsForEmblem($"{emblem.Id}:tags");
-            emblem.Tags = tags;
+            var emblemTags = await _cache.GetTagsForEmblem(emblem.Id.ToString());
+            emblem.Tags = emblemTags;
         }
         return new EmblemSearchResult(emblems.TotalEmblems, emblems.Emblems.ToList());
     }
