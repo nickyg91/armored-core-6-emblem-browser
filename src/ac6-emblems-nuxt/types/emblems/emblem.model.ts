@@ -1,4 +1,4 @@
-import type { PlatformType } from "../platform-type.enum";
+import type { PlatformType } from '../platform-type.enum';
 
 export class Emblem {
   name!: string;

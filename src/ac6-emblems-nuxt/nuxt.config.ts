@@ -1,8 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  css: ["~/assets/css/main.css"],
-  modules: ["@nuxt/ui", "@pinia/nuxt", "@nuxtjs/tailwindcss"],
+  css: ['~/assets/css/main.css'],
+  modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxtjs/tailwindcss', '@nuxtjs/eslint-module', '@vueuse/nuxt'],
   postcss: {
     plugins: {
       tailwindcss: {},
@@ -11,9 +11,9 @@ export default defineNuxtConfig({
   },
   nitro: {
     routeRules: {
-      "/api/**": {
+      '/api/**': {
         proxy: {
-          to: "https://localhost:7111/api/**",
+          to: 'https://localhost:7111/api/**',
         },
       },
     },

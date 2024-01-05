@@ -7,16 +7,17 @@ onMounted(async () => {
 <template>
   <UContainer>
     <USkeleton v-if="store.pending" />
-    <UCard v-for="emblem in store.emblemResults?.emblems">
-      <template #header>
-        {{ emblem.name }}
-      </template>
-      {{ emblem.platform }}
-      <template #footer>
-        {{ emblem.imageUrl }}
-      </template>
-    </UCard>
+    <div v-else class="mt-5 grid grid-cols-4 grid-flow-col gap-5">
+      <EmblemCard v-for="emblem in store.emblems" :key="emblem.id" :emblem="emblem"></EmblemCard>
+    </div>
   </UContainer>
 </template>
 
-<style scoped></style>
+<style scoped>
+.scrollable {
+  max-height: 1080px;
+  width: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+</style>
