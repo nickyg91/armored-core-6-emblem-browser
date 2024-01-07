@@ -23,19 +23,36 @@ function getTagColor(platform: PlatformType): string {
 }
 </script>
 <template>
-  <UCard :key="emblem.id" class="card-container">
-    <template v-if="emblem.imageUrl" #header>
-      <ImageContainer :id="emblem.id" :name="emblem.name"></ImageContainer>
+  <UCard
+    :key="emblem.id"
+    class="card-container"
+  >
+    <template
+      v-if="emblem.imageUrl"
+      #header
+    >
+      <ImageContainer
+        :id="emblem.id"
+        :name="emblem.name"
+      ></ImageContainer>
     </template>
     <h1>{{ emblem.name }}</h1>
     <h2>{{ emblem.shareId }}</h2>
     <h3 v-if="emblem.tags.length > 0">Tags</h3>
     <div class="flex flex-wrap">
-      <div v-for="tag in emblem.tags" :key="tag" class="m-2">
+      <div
+        v-for="tag in emblem.tags"
+        :key="tag"
+        class="m-2"
+      >
         <UBadge :ui="{ color: 'gray' }">{{ tag }}</UBadge>
       </div>
       <div>
-        <UBadge variant="soft" :color="getTagColor(emblem.platform)" :ui="{ rounded: 'rounded-full' }">
+        <UBadge
+          variant="soft"
+          :color="getTagColor(emblem.platform)"
+          :ui="{ rounded: 'rounded-full' }"
+        >
           {{ getPlatformName(emblem.platform) }}
         </UBadge>
       </div>

@@ -32,11 +32,23 @@ async function loadImage() {
 </script>
 <template>
   <div>
-    <div v-if="isLoading" ref="target" class="img flex justify-center items-center">
+    <div
+      v-if="isLoading"
+      ref="target"
+      class="img flex justify-center items-center"
+    >
       <USkeleton />
     </div>
-    <div v-else ref="target" class="img-container">
-      <img class="img" :src="image" :alt="'image for ' + name" />
+    <div
+      v-else
+      ref="target"
+      class="img-container"
+    >
+      <img
+        class="img"
+        :src="image"
+        :alt="'image for ' + name"
+      />
     </div>
   </div>
 </template>
