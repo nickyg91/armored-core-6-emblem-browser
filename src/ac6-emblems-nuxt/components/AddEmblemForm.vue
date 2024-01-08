@@ -37,9 +37,7 @@ const form = ref<Form<Emblem> | null>(null);
 const filteredSuggestions = ref<string[]>([...store.tags]);
 
 type EmblemSchema = z.output<typeof schema>;
-// eslint-disable-next-line require-await
-async function onSubmit(values: FormSubmitEvent<EmblemSchema>) {
-  debugger;
+function onSubmit(values: FormSubmitEvent<EmblemSchema>) {
   const emblem = values.data;
   console.log(emblem);
   emblem.imageData = fileData.value!;
@@ -58,6 +56,10 @@ function onFileChanged($event: Event) {
     };
   }
 }
+
+const isFormValid = computed(() => {
+  return (form.value?.errors?.length ?? 0) === 0;
+});
 
 const state = reactive({
   name: '',
@@ -137,15 +139,13 @@ function removeFile() {
       >
       </URadioGroup>
     </UFormGroup>
-    <div class="footer mt-2">
-      <div class="flex">
-        <UButton
-          type="submit"
-          icon="i-heroicons-check"
-          label="Submit"
-        ></UButton>
-      </div>
-    </div>
+
+    <UButton
+      :disabled="!isFormValid"
+      type="submit"
+      icon="i-heroicons-check"
+      label="Submit"
+    ></UButton>
   </UForm>
 </template>
 <style scoped lang="css">
