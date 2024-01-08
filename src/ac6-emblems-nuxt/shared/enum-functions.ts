@@ -24,3 +24,17 @@ export function toArrayOfEnumDescriptions<T extends Object>(enumType: T): IKeyVa
     });
   return arr;
 }
+
+export function toRadioOptionsEnumDescriptions<T extends Object>(enumType: T): { label: string; value: number }[] {
+  const arr = new Array<{ label: string; value: number }>();
+  Object.keys(enumType)
+    .filter((key) => isNaN(Number(key)))
+    // eslint-disable-next-line array-callback-return
+    .map((key) => {
+      arr.push({ label: key, value: Number(enumType[key as keyof typeof enumType]) } as {
+        label: string;
+        value: number;
+      });
+    });
+  return arr;
+}

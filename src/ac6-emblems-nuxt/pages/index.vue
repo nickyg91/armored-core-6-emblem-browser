@@ -1,5 +1,11 @@
 <script setup lang="ts">
 const store = useEmblemsStore();
+const isAddModalShown = ref(false);
+
+const onAddComplete = () => {
+  isAddModalShown.value = false;
+};
+
 onMounted(async () => {
   await store.fetchEmblems();
 });
@@ -7,16 +13,26 @@ onMounted(async () => {
 <template>
   <UContainer>
     <USkeleton v-if="store.pending" />
-    <div
-      v-else
-      class="mt-5 grid grid-cols-4 grid-flow-col gap-5"
-    >
-      <EmblemCard
-        v-for="emblem in store.emblems"
-        :key="emblem.id"
-        :emblem="emblem"
-      ></EmblemCard>
+    <div v-else>
+      <div>
+        <UButton
+          label="Add Emblem"
+          @click="isAddModalShown = true"
+        ></UButton>
+      </div>
+      <div class="mt-5 grid grid-cols-4 grid-flow-col gap-5">
+        <EmblemCard
+          v-for="emblem in store.emblems"
+          :key="emblem.id"
+          :emblem="emblem"
+        ></EmblemCard>
+      </div>
     </div>
+    <USlideover v-model="isAddModalShown">
+      <UCard>
+        <AddEmblemForm @add-complete="onAddComplete"></AddEmblemForm>
+      </UCard>
+    </USlideover>
   </UContainer>
 </template>
 
