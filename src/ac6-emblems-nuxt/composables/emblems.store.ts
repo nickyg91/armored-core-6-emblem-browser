@@ -26,6 +26,16 @@ export const useEmblemsStore = defineStore('emblems', () => {
     immediate: false,
   });
 
+  const createEmblem = async (emblem: Emblem) => {
+    const createdEmblem = await $fetch<Emblem>('/api/emblem/create', {
+      method: 'POST',
+      body: emblem,
+    });
+    if (createdEmblem) {
+      emblems.value.push(createdEmblem);
+    }
+  };
+
   const fetchEmblems = async () => {
     const result = await execute();
     if (result) {
@@ -62,5 +72,6 @@ export const useEmblemsStore = defineStore('emblems', () => {
     fetchEmblems,
     fetchTags,
     resetEmblems,
+    createEmblem,
   };
 });

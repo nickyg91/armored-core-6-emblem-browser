@@ -32,7 +32,7 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
-    "@nuxt/ui": "^2.11.1",
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest",
     "@vee-validate/nuxt": "^4.12.4",
     "@vee-validate/zod": "^4.12.4",
     "pinia": "^2.1.7",

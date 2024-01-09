@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ArmoredCoreSixEmblemBrowser.Core;
 using ArmoredCoreSixEmblemBrowser.Core.Configuration;
 using ArmoredCoreSixEmblemBrowser.Data.Cache;
@@ -23,7 +24,11 @@ builder.Services.AddBlobService(blobConnectionString);
 builder.Services.AddScoped<IEmblemBlobStorageService, EmblemBlobStorageService>();
 builder.Services.AddSingleton<ICacheService, CacheService>();
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions((options) =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

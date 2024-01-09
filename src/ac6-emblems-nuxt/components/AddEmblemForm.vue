@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { any, array, nativeEnum, object, string, z } from 'zod';
 import { computed, ref } from 'vue';
-import type { Form, FormSubmitEvent } from '@nuxt/ui/dist/runtime/types/form';
+import type { Form } from '@nuxt/ui/dist/runtime/types/form';
 import { toRadioOptionsEnumDescriptions } from '@/shared/enum-functions';
 import { PlatformType } from '~/types/platform-type.enum';
 import type { Emblem } from '~/types/emblems/emblem.model';
@@ -10,8 +10,17 @@ const MAX_FILE_SIZE = 250000;
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 const fileData = ref<string | null>(null);
 const file = ref<File | null>(null);
+const isLoading = ref(false);
 const emit = defineEmits<{ (e: 'addComplete'): void }>();
 
+const state = reactive({
+  name: '',
+  shareId: '',
+  imageData: '',
+  platform: PlatformType.PC,
+  tags: Array<string>(),
+  imageExtension: '',
+} as Emblem);
 const schema = object({
   name: string().min(1, 'Name is required.').max(64, 'Name cannot be more than 64 characters in length.').default(''),
   shareId: string()
@@ -31,19 +40,42 @@ const store = useEmblemsStore();
 const platformMap = computed(() => {
   return toRadioOptionsEnumDescriptions(PlatformType);
 });
-
+const toast = useToast();
 const form = ref<Form<Emblem> | null>(null);
 
-const filteredSuggestions = ref<string[]>([...store.tags]);
+const suggestions = ref<string[]>([...store.tags]);
 
-type EmblemSchema = z.output<typeof schema>;
-function onSubmit(values: FormSubmitEvent<EmblemSchema>) {
-  const emblem = values.data;
-  console.log(emblem);
-  emblem.imageData = fileData.value!;
-  // emblem.imageExtension = file.value!.type;
-  // await store.addEmblem(emblem);
-  emit('addComplete');
+// eslint-disable-next-line require-await
+async function onSubmit() {
+  if ((form.value?.errors?.length ?? 0) > 0) {
+    return;
+  }
+  isLoading.value = true;
+  try {
+    state.imageData = fileData.value!;
+    state.imageExtension = file.value!.type;
+    await store.createEmblem(state);
+    emit('addComplete');
+    toast.add({
+      timeout: 5000,
+      color: 'green',
+      icon: 'i-heroicons-check',
+      title: 'Success!',
+      description: 'Emblem added successfully.',
+    });
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error);
+    toast.add({
+      timeout: 5000,
+      color: 'red',
+      icon: 'i-heroicons-x-mark',
+      title: 'Error!',
+      description: 'Emblem could not be created.',
+    });
+  } finally {
+    isLoading.value = false;
+  }
 }
 function onFileChanged($event: Event) {
   const target = $event.target as HTMLInputElement;
@@ -61,13 +93,22 @@ const isFormValid = computed(() => {
   return (form.value?.errors?.length ?? 0) === 0;
 });
 
-const state = reactive({
-  name: '',
-  shareId: '',
-  imageData: '',
-  platform: '',
-  tags: [],
+const tags = computed({
+  get: () => state.tags,
+  set: (values) => {
+    values.map((val) => {
+      if (!suggestions.value.includes(val)) {
+        suggestions.value.push(val);
+      }
+      return val;
+    });
+    state.tags = values;
+  },
 });
+
+function onModelValueUpdated(values: [{ label: string }]) {
+  state.tags = values.map((x: { label: string }) => x.label);
+}
 
 function removeFile() {
   file.value = null;
@@ -106,10 +147,12 @@ function removeFile() {
     >
       <USelectMenu
         v-model="state.tags"
-        :options="filteredSuggestions"
+        :options="tags"
+        show-create-option-when="always"
         creatable
         searchable
         multiple
+        @update:model-value="onModelValueUpdated"
       >
       </USelectMenu>
     </UFormGroup>
@@ -125,6 +168,7 @@ function removeFile() {
       />
       <UButton
         v-if="file"
+        class="mt-2"
         icon="i-heroicons-x-mark"
         :label="file?.name"
         @click="removeFile"
@@ -139,13 +183,15 @@ function removeFile() {
       >
       </URadioGroup>
     </UFormGroup>
-
-    <UButton
-      :disabled="!isFormValid"
-      type="submit"
-      icon="i-heroicons-check"
-      label="Submit"
-    ></UButton>
+    <div class="flex justify-end">
+      <UButton
+        :disabled="!isFormValid"
+        :loading="isLoading"
+        type="submit"
+        icon="i-heroicons-check"
+        label="Submit"
+      ></UButton>
+    </div>
   </UForm>
 </template>
 <style scoped lang="css">

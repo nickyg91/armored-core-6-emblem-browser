@@ -39,7 +39,7 @@ function getTagColor(platform: PlatformType): string {
     <h1>{{ emblem.name }}</h1>
     <h2>{{ emblem.shareId }}</h2>
     <h3 v-if="emblem.tags.length > 0">Tags</h3>
-    <div class="flex flex-wrap">
+    <div class="flex flex-wrap align-middle">
       <div
         v-for="tag in emblem.tags"
         :key="tag"
@@ -47,7 +47,7 @@ function getTagColor(platform: PlatformType): string {
       >
         <UBadge :ui="{ color: 'gray' }">{{ tag }}</UBadge>
       </div>
-      <div>
+      <div class="m-2">
         <UBadge
           variant="soft"
           :color="getTagColor(emblem.platform)"

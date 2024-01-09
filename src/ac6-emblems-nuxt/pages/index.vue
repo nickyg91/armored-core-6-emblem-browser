@@ -2,10 +2,6 @@
 const store = useEmblemsStore();
 const isAddModalShown = ref(false);
 
-const onAddComplete = () => {
-  isAddModalShown.value = false;
-};
-
 onMounted(async () => {
   await store.fetchEmblems();
 });
@@ -28,9 +24,21 @@ onMounted(async () => {
         ></EmblemCard>
       </div>
     </div>
-    <USlideover v-model="isAddModalShown">
+    <USlideover
+      v-model="isAddModalShown"
+      :prevent-close="true"
+    >
       <UCard>
-        <AddEmblemForm @add-complete="onAddComplete"></AddEmblemForm>
+        <template #header>
+          <div class="flex justify-end">
+            <UButton
+              :ui="{ rounded: 'rounded-full' }"
+              icon="i-heroicons-x-mark"
+              @click="isAddModalShown = false"
+            ></UButton>
+          </div>
+        </template>
+        <AddEmblemForm @add-complete="isAddModalShown = false"></AddEmblemForm>
       </UCard>
     </USlideover>
   </UContainer>
