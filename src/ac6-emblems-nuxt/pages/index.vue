@@ -1,20 +1,26 @@
 <script setup lang="ts">
 const store = useEmblemsStore();
-const isAddModalShown = ref(false);
+const isAddSlideoutShown = ref(false);
 
 onMounted(async () => {
   await store.fetchEmblems();
+  await store.fetchTags();
 });
+
+const onAddComplete = async () => {
+  await store.fetchTags();
+  isAddSlideoutShown.value = false;
+};
 </script>
 <template>
   <UContainer>
     <USkeleton v-if="store.pending" />
-    <div v-else>
+    <div
+      v-else
+      class="mt-5"
+    >
       <div>
-        <UButton
-          label="Add Emblem"
-          @click="isAddModalShown = true"
-        ></UButton>
+        <SearchEmblems @add-clicked="isAddSlideoutShown = true"></SearchEmblems>
       </div>
       <div class="mt-5 grid grid-cols-4 grid-flow-col gap-5">
         <EmblemCard
@@ -25,7 +31,7 @@ onMounted(async () => {
       </div>
     </div>
     <USlideover
-      v-model="isAddModalShown"
+      v-model="isAddSlideoutShown"
       :prevent-close="true"
     >
       <UCard>
@@ -34,11 +40,11 @@ onMounted(async () => {
             <UButton
               :ui="{ rounded: 'rounded-full' }"
               icon="i-heroicons-x-mark"
-              @click="isAddModalShown = false"
+              @click="isAddSlideoutShown = false"
             ></UButton>
           </div>
         </template>
-        <AddEmblemForm @add-complete="isAddModalShown = false"></AddEmblemForm>
+        <AddEmblemForm @add-complete="onAddComplete"></AddEmblemForm>
       </UCard>
     </USlideover>
   </UContainer>
