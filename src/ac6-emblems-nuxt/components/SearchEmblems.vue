@@ -2,7 +2,11 @@
 import { toArrayOfEnumDescriptions } from '~/shared/enum-functions';
 import { PlatformType } from '~/types/platform-type.enum';
 
-const emits = defineEmits<{ (e: 'addClicked'): void }>();
+const toast = useToast();
+const emits = defineEmits<{
+  (e: 'addClicked'): void;
+  (e: 'searchLoading', isLoading: boolean): void;
+}>();
 const store = useEmblemsStore();
 const platforms = toArrayOfEnumDescriptions(PlatformType);
 const filterCriteria = reactive({
@@ -13,13 +17,26 @@ const filterCriteria = reactive({
 
 watchDebounced(
   filterCriteria,
-  () => {
-    if (!filterCriteria.searchQuery && filterCriteria.platforms.length === 0 && filterCriteria.tags.length === 0) {
-      // store.resetEmblems();
-      // await store.getEmblems();
-    } else {
-      // store.resetEmblems();
-      // await store.getFilteredEmblems(filterCriteria.platforms, filterCriteria.searchQuery, filterCriteria.tags);
+  async () => {
+    emits('searchLoading', true);
+    try {
+      if (!filterCriteria.searchQuery && filterCriteria.platforms.length === 0 && filterCriteria.tags.length === 0) {
+        store.resetEmblems();
+        await store.fetchEmblems();
+      } else {
+        store.resetEmblems();
+        await store.fetchFilteredEmblems(filterCriteria.platforms, filterCriteria.searchQuery, filterCriteria.tags);
+      }
+    } catch (error) {
+      toast.add({
+        timeout: 5000,
+        color: 'red',
+        icon: 'i-heroicons-x-mark',
+        title: 'Error!',
+        description: 'Your search failed! Try again later.',
+      });
+    } finally {
+      emits('searchLoading', false);
     }
   },
   { debounce: 500, maxWait: 1000, deep: true },
@@ -39,6 +56,7 @@ function onCheckboxClicked(val: number) {
     <div class="flex">
       <div class="flex flex-grow mr-3">
         <UInput
+          v-model="filterCriteria.searchQuery"
           class="w-full"
           placeholder="Search Name, Tags, or Share ID"
         ></UInput>
@@ -71,8 +89,7 @@ function onCheckboxClicked(val: number) {
           placeholder="Tags"
           multiple
           searchable
-        >
-        </USelectMenu>
+        />
       </div>
     </div>
   </UCard>

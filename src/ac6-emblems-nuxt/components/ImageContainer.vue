@@ -34,11 +34,16 @@ async function loadImage() {
   <div>
     <div
       v-if="isLoading"
-      ref="target"
-      class="img flex justify-center items-center"
+      class="img-container"
     >
-      <USkeleton />
+      <div
+        ref="target"
+        class="img flex justify-center items-center"
+      >
+        <LoadingSpinner></LoadingSpinner>
+      </div>
     </div>
+
     <div
       v-else
       ref="target"

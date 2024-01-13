@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import type { IEmblemSearchResult } from '~/types/emblems/emblem-search-result.interface';
 import type { Emblem } from '~/types/emblems/emblem.model';
+import type { PlatformType } from '~/types/platform-type.enum';
 
 export const useEmblemsStore = defineStore('emblems', () => {
   const emblems = ref<Array<Emblem>>([]);
@@ -60,6 +61,33 @@ export const useEmblemsStore = defineStore('emblems', () => {
     emblems.value = [];
   };
 
+  const fetchFilteredEmblems = async (platforms: PlatformType[], searchQuery: string, tags: string[]) => {
+    const url = `/api/emblem/search/${currentPageNumber.value}/${totalPerPage.value}`;
+    const queryString = new URLSearchParams();
+    if (searchQuery) {
+      queryString.append('name', searchQuery);
+    }
+
+    if (platforms.length > 0) {
+      platforms.forEach((platform) => {
+        queryString.append('platforms', platform.toString());
+      });
+    }
+
+    if (tags.length > 0) {
+      tags.forEach((tag) => {
+        queryString.append('tags', tag);
+      });
+    }
+    const finalUrl = url + '?' + queryString.toString();
+    const filteredResults = await $fetch<IEmblemSearchResult>(finalUrl, {
+      method: 'GET',
+    });
+    if (totalEmblems.value === 0) {
+      totalEmblems.value = filteredResults.totalEmblems;
+    }
+    emblems.value.push(...filteredResults.emblems);
+  };
   return {
     emblems,
     currentPageNumber,
@@ -75,5 +103,6 @@ export const useEmblemsStore = defineStore('emblems', () => {
     fetchTags,
     resetEmblems,
     createEmblem,
+    fetchFilteredEmblems,
   };
 });
