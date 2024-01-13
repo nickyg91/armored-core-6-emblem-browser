@@ -20,13 +20,12 @@ const onAddComplete = async () => {
         @add-clicked="isAddSlideoutShown = true"
       ></SearchEmblems>
     </div>
-
     <LoadingSpinner v-if="isLoading || store.pending"></LoadingSpinner>
     <div
       v-else
       class="mt-5 transition-opacity duration-200 opacity-100 scrollable"
     >
-      <div class="mt-5 grid grid-cols-4 grid-flow-col gap-5">
+      <div class="grid grid-cols-4 grid-flow-col gap-5">
         <EmblemCard
           v-for="emblem in store.emblems"
           :key="emblem.id"
