@@ -81,7 +81,7 @@ function onCheckboxClicked(val: number) {
           @click="onCheckboxClicked(item.value)"
         ></UCheckbox>
       </div>
-      <div class="flex align-items-center">
+      <div class="flex align-items-center w-max">
         <USelectMenu
           v-model="filterCriteria.tags"
           class="w-max"
@@ -89,7 +89,7 @@ function onCheckboxClicked(val: number) {
           placeholder="Tags"
           multiple
           searchable
-        />
+        ></USelectMenu>
       </div>
     </div>
   </UCard>

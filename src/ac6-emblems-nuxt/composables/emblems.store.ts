@@ -49,9 +49,9 @@ export const useEmblemsStore = defineStore('emblems', () => {
   };
 
   const fetchTags = async () => {
-    const result = await executeGetTags();
-    if (result) {
-      result.forEach((element) => {
+    await executeGetTags();
+    if (emblemTags) {
+      emblemTags.value!.forEach((element) => {
         tags.value.push(element);
       });
     }
