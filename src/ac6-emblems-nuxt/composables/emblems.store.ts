@@ -9,24 +9,6 @@ export const useEmblemsStore = defineStore('emblems', () => {
   const totalPerPage = ref(25);
   const totalEmblems = ref(0);
   const tags = ref<Array<string>>([]);
-  const {
-    data: emblemResultSet,
-    pending,
-    error,
-    execute,
-  } = useFetch<IEmblemSearchResult>(`/api/emblem/search/${currentPageNumber.value}/${totalPerPage.value}`, {
-    immediate: false,
-    retry: 0,
-  });
-
-  const {
-    data: emblemTags,
-    pending: pendingTags,
-    error: tagsError,
-    execute: executeGetTags,
-  } = useFetch<string[]>('/api/emblem/tags', {
-    immediate: false,
-  });
 
   const createEmblem = async (emblem: Emblem) => {
     const createdEmblem = await $fetch<Emblem>('/api/emblem/create', {
@@ -39,19 +21,26 @@ export const useEmblemsStore = defineStore('emblems', () => {
   };
 
   const fetchEmblems = async () => {
-    await execute();
-    if (emblemResultSet.value) {
-      emblemResultSet.value.emblems.forEach((element) => {
+    const emblemResultSet = await $fetch<IEmblemSearchResult>(
+      `/api/emblem/search/${currentPageNumber.value}/${totalPerPage.value}`,
+      {
+        method: 'GET',
+      },
+    );
+    if (emblemResultSet) {
+      emblemResultSet.emblems.forEach((element) => {
         emblems.value.push(element);
       });
-      totalEmblems.value = emblemResultSet.value.totalEmblems;
+      totalEmblems.value = emblemResultSet.totalEmblems;
     }
   };
 
   const fetchTags = async () => {
-    await executeGetTags();
-    if (emblemTags) {
-      emblemTags.value!.forEach((element) => {
+    const data = await $fetch<string[]>('/api/emblem/tags', {
+      method: 'GET',
+    });
+    if (data) {
+      data.forEach((element) => {
         tags.value.push(element);
       });
     }
@@ -94,11 +83,6 @@ export const useEmblemsStore = defineStore('emblems', () => {
     totalPerPage,
     totalEmblems,
     tags,
-    pending,
-    error,
-    emblemTags,
-    pendingTags,
-    tagsError,
     fetchEmblems,
     fetchTags,
     resetEmblems,

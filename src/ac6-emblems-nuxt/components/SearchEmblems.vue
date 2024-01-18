@@ -68,11 +68,11 @@ function onCheckboxClicked(val: number) {
         ></UButton>
       </div>
     </div>
-    <div class="flex justify-evenly mt-5">
+    <div class="flex justify-between mt-5">
       <div
         v-for="item in platforms"
         :key="item.value + '-filter'"
-        class="flex align-items-center mr-1"
+        class="flex align-items-center mr-1 p-1"
       >
         <UCheckbox
           :id="item.key + '-filter'"
@@ -81,16 +81,16 @@ function onCheckboxClicked(val: number) {
           @click="onCheckboxClicked(item.value)"
         ></UCheckbox>
       </div>
-      <div class="flex align-items-center w-max">
-        <USelectMenu
-          v-model="filterCriteria.tags"
-          class="w-max"
-          :options="store.tags"
-          placeholder="Tags"
-          multiple
-          searchable
-        ></USelectMenu>
-      </div>
+    </div>
+    <div class="flex flex-grow align-items-center mt-5">
+      <USelectMenu
+        v-model="filterCriteria.tags"
+        :options="store.tags"
+        class="w-full"
+        placeholder="Tags"
+        multiple
+        searchable
+      ></USelectMenu>
     </div>
   </UCard>
 </template>

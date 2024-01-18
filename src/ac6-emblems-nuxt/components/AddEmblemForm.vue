@@ -12,6 +12,7 @@ const fileData = ref<string | null>(null);
 const file = ref<File | null>(null);
 const isLoading = ref(false);
 const emit = defineEmits<{ (e: 'addComplete'): void }>();
+const store = useEmblemsStore();
 
 const state = reactive({
   name: '',
@@ -36,7 +37,6 @@ const schema = object({
   tags: array(z.string()).nonempty('At least one tag is required.').max(10, 'Cannot exceed more than 10 tags.'),
 });
 
-const store = useEmblemsStore();
 const platformMap = computed(() => {
   return toRadioOptionsEnumDescriptions(PlatformType);
 });
@@ -44,8 +44,22 @@ const toast = useToast();
 const form = ref<Form<Emblem> | null>(null);
 
 const suggestions = ref<string[]>([...store.tags]);
+const isFormValid = computed(() => {
+  return (form.value?.errors?.length ?? 0) === 0;
+});
 
-// eslint-disable-next-line require-await
+const tags = computed({
+  get: () => store.tags,
+  set: (values) => {
+    values.map((val) => {
+      if (!suggestions.value.includes(val)) {
+        suggestions.value.push(val);
+      }
+      return val;
+    });
+    state.tags = values;
+  },
+});
 async function onSubmit() {
   if ((form.value?.errors?.length ?? 0) > 0) {
     return;
@@ -88,23 +102,6 @@ function onFileChanged($event: Event) {
     };
   }
 }
-
-const isFormValid = computed(() => {
-  return (form.value?.errors?.length ?? 0) === 0;
-});
-
-const tags = computed({
-  get: () => state.tags,
-  set: (values) => {
-    values.map((val) => {
-      if (!suggestions.value.includes(val)) {
-        suggestions.value.push(val);
-      }
-      return val;
-    });
-    state.tags = values;
-  },
-});
 
 function onModelValueUpdated(values: [{ label: string }]) {
   state.tags = values.map((x: { label: string }) => x.label);

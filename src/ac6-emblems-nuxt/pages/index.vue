@@ -2,11 +2,34 @@
 const store = useEmblemsStore();
 const isAddSlideoutShown = ref(false);
 const isLoading = ref(false);
+const toast = useToast();
 onMounted(async () => {
-  await store.fetchEmblems();
-  await store.fetchTags();
+  try {
+    await store.fetchEmblems();
+    await store.fetchTags();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error);
+    toast.add({
+      timeout: 5000,
+      color: 'red',
+      icon: 'i-heroicons-x-mark',
+      title: 'Error!',
+      description: 'An Error occurred fetching emblems.',
+    });
+  }
 });
-
+const onScrollDebounced = useDebounceFn((e) => {
+  watchEffect(async () => {
+    const clientHeight = e.target.clientHeight;
+    const scrollHeight = e.target.scrollHeight;
+    const scrollTop = e.target.scrollTop;
+    if (scrollTop + clientHeight >= scrollHeight) {
+      store.currentPageNumber++;
+      await store.fetchEmblems();
+    }
+  });
+}, 1000);
 const onAddComplete = async () => {
   await store.fetchTags();
   isAddSlideoutShown.value = false;
@@ -20,10 +43,11 @@ const onAddComplete = async () => {
         @add-clicked="isAddSlideoutShown = true"
       ></SearchEmblems>
     </div>
-    <LoadingSpinner v-if="isLoading || store.pending"></LoadingSpinner>
+    <LoadingSpinner v-if="isLoading"></LoadingSpinner>
     <div
       v-else
       class="mt-5 transition-opacity duration-200 opacity-100 scrollable"
+      @scroll="onScrollDebounced($event)"
     >
       <div class="grid grid-cols-4 grid-flow-col gap-5">
         <EmblemCard
