@@ -42,14 +42,19 @@ public class CacheService : ICacheService
         await Database.StringSetAsync(key, imageData, ttl);
     }
 
-    public async Task<byte[]?> GetImage(string key)
+    public async Task<(byte[]?, TimeSpan?)> GetImage(string key)
     {
         byte[]? bytes = await Database.StringGetAsync(key);
+        TimeSpan? remainingTtl = await Database.KeyTimeToLiveAsync(key);
+        if (remainingTtl == null && bytes != null)
+        {
+            await Database.StringSetAsync(key, bytes, TimeSpan.FromDays(7));
+        }
         if (bytes == null || bytes.Length == 0)
         {
-            return null;
+            return (null, null);
         }
-        return bytes;
+        return (bytes, remainingTtl);
     }
 
     public async Task<List<string>> GetTagsForEmblem(string key)

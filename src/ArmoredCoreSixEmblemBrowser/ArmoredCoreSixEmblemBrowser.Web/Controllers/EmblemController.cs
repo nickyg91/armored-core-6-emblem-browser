@@ -3,6 +3,7 @@ using ArmoredCoreSixEmblemBrowser.Domain;
 using ArmoredCoreSixEmblemBrowser.Domain.Objects;
 using ArmoredCoreSixEmblemBrowser.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 
 namespace ArmoredCoreSixEmblemBrowser.Web.Controllers
 {
@@ -57,8 +58,10 @@ namespace ArmoredCoreSixEmblemBrowser.Web.Controllers
         [HttpGet("image/{id}")]
         public async Task<IActionResult> GetImageForEmblem(int id)
         {
+            var emblem = await _emblemService.GetById(id);
             var data = await _emblemService.GetEmblemImage(id);
-            return File(data.ImageData, data.Extension);
+            var entityTag = new EntityTagHeaderValue($"\"{emblem.ImageUrl}\"");
+            return File(data.ImageData, data.Extension,  data.CacheTtl, entityTag);
         }
 
         [HttpGet("tags")]

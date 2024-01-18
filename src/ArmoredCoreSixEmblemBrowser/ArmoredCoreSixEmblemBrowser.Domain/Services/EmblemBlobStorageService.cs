@@ -27,12 +27,15 @@ public class EmblemBlobStorageService : IEmblemBlobStorageService
         return blobIdentifier;
     }
 
-    public async Task<byte[]> DownloadBlob(string identifier)
+    public async Task<(byte[] Image, DateTimeOffset DateCreated)> DownloadBlob(string identifier)
     {
         var imageFromCache = await _cache.GetImage(identifier);
-        if (imageFromCache != null)
+        if (imageFromCache.Image != null)
         {
-            return imageFromCache;
+            var dateCreated = imageFromCache.Ttl.HasValue
+                ? DateTime.UtcNow.Subtract(imageFromCache.Ttl!.Value)
+                : DateTimeOffset.UtcNow;
+            return (imageFromCache.Image, dateCreated);
         }
         var blobClient = _blobContainerClient.GetBlobClient(identifier);
         var downloadedBlob = await blobClient.DownloadAsync();
@@ -40,7 +43,6 @@ public class EmblemBlobStorageService : IEmblemBlobStorageService
         await downloadedBlob.Value.Content.CopyToAsync(memoryStream);
         var bytes = memoryStream.ToArray();
         await _cache.WriteImage(identifier, bytes, TimeSpan.FromDays(7));
-        
-        return bytes;
+        return (bytes, downloadedBlob.Value.Details.CreatedOn);
     }
 }

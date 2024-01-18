@@ -87,7 +87,7 @@ public class EmblemBrowserService : IEmblemBrowserService
         return emblem;
     }
 
-    public async Task<(byte[] ImageData, string Extension)> GetEmblemImage(int id)
+    public async Task<(byte[] ImageData, string Extension, DateTimeOffset CacheTtl)> GetEmblemImage(int id)
     {
         var emblemImageTuple = await _emblemUnitOfWork.EmblemRepository.GetEmblemImageIdentifier(id);
         if (string.IsNullOrEmpty(emblemImageTuple.ImageIdentifier))
@@ -96,11 +96,16 @@ public class EmblemBrowserService : IEmblemBrowserService
         }
 
         var stream = await _emblemBlobStorageService.DownloadBlob(emblemImageTuple.ImageIdentifier);
-        return (stream, emblemImageTuple.ImageExtension);
+        return (stream.Image, emblemImageTuple.ImageExtension, stream.DateCreated);
     }
 
     public async Task<List<string>> GetAllTags()
     {
         return await _cache.GetAllTags();
+    }
+
+    public async Task<Emblem> GetById(int id)
+    {
+        return (await _emblemUnitOfWork.EmblemRepository.GetById(id))!;
     }
 }
