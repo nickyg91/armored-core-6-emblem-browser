@@ -49,7 +49,7 @@ const onAddComplete = async () => {
       class="mt-5 transition-opacity duration-200 opacity-100 scrollable"
       @scroll="onScrollDebounced($event)"
     >
-      <div class="grid grid-cols-4 grid-flow-col gap-5">
+      <div class="grid grid-cols-4 gap-5">
         <EmblemCard
           v-for="emblem in store.emblems"
           :key="emblem.id"

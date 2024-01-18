@@ -2,7 +2,6 @@
 export default defineNuxtConfig({
   devtools: {
     enabled: true,
-
     timeline: {
       enabled: true,
     },
@@ -22,6 +21,11 @@ export default defineNuxtConfig({
           to: 'https://localhost:7111/api/**',
         },
       },
+    },
+  },
+  app: {
+    head: {
+      title: 'AC6 Emblem Browser',
     },
   },
 });
